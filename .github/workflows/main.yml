@@ -30,11 +30,12 @@ jobs:
       - name: Build EXE
         shell: msys2 {0}
         run: |
+          MINGW_WIN=$(cygpath -w $MINGW_PREFIX)
           pyinstaller --onefile --name "shaweelTimer" \
-            --add-data "$MINGW_PREFIX/lib/girepository-1.0:lib/girepository-1.0" \
-            --add-data "$MINGW_PREFIX/share/glib-2.0/schemas:share/glib-2.0/schemas" \
-            --add-data "$MINGW_PREFIX/lib/gdk-pixbuf-2.0:lib/gdk-pixbuf-2.0" \
-            --add-data "$MINGW_PREFIX/share/icons:share/icons" \
+            --add-data "$MINGW_WIN/lib/girepository-1.0;lib/girepository-1.0" \
+            --add-data "$MINGW_WIN/share/glib-2.0/schemas;share/glib-2.0/schemas" \
+            --add-data "$MINGW_WIN/lib/gdk-pixbuf-2.0;lib/gdk-pixbuf-2.0" \
+            --add-data "$MINGW_WIN/share/icons;share/icons" \
             --collect-all gi \
             main.py
       - name: Upload EXE
