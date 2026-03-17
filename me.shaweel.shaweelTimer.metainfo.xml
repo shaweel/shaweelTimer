@@ -14,10 +14,19 @@
   <screenshots>
     <screenshot type="default">
       <image>https://raw.githubusercontent.com/shaweel/shaweelTimer/main/assets/screenshots/all.png</image>
+      <caption>Overview</caption>
+    </screenshot>
+    <screenshot>
       <image>https://raw.githubusercontent.com/shaweel/shaweelTimer/main/assets/screenshots/main.png</image>
-      <image>https://raw.githubusercontent.com/shaweel/shaweelTimer/main/assets/screenshots/preferences.png</image>
-      <image>https://raw.githubusercontent.com/shaweel/shaweelTimer/main/assets/screenshots/colorfulConfig.png</image>
       <caption>Main window</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/shaweel/shaweelTimer/main/assets/screenshots/preferences.png</image>
+      <caption>Preferences</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/shaweel/shaweelTimer/main/assets/screenshots/colorfulConfig.png</image>
+      <caption>Colorful configuration</caption>
     </screenshot>
   </screenshots>
   <releases>
