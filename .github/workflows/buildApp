@@ -1,0 +1,160 @@
+name: Build App
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: >
+            mingw-w64-x86_64-gtk4
+            mingw-w64-x86_64-python
+            mingw-w64-x86_64-python-pip
+            mingw-w64-x86_64-python-gobject
+            mingw-w64-x86_64-python-cairo
+
+      - name: Install PyInstaller
+        shell: msys2 {0}
+        run: pip install pyinstaller
+
+      - name: Build EXE
+        shell: msys2 {0}
+        run: |
+          pyinstaller --onefile --name "shaweelTimer" \
+            --add-data "/mingw64/lib/girepository-1.0:lib/girepository-1.0" \
+            --add-data "/mingw64/share/glib-2.0/schemas:share/glib-2.0/schemas" \
+            --add-data "/mingw64/lib/gdk-pixbuf-2.0:lib/gdk-pixbuf-2.0" \
+            --add-data "/mingw64/share/icons:share/icons" \
+            --collect-all gi \
+            main.py
+
+      - name: Upload EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: shaweelTimer-windows
+          path: dist/shaweelTimer.exe
+  build-deb:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build .deb
+        run: |
+          mkdir -p deb-pkg/DEBIAN
+          mkdir -p deb-pkg/usr/bin
+          mkdir -p deb-pkg/usr/lib/shaweel-timer
+
+          cp main.py deb-pkg/usr/lib/shaweel-timer/
+
+          cat > deb-pkg/DEBIAN/control << EOF
+          Package: shaweel-timer
+          Version: 1.0.0
+          Architecture: all
+          Maintainer: Shaweel <you@email.com>
+          Depends: python3, python3-gi, python3-gi-cairo, gir1.2-gtk-4.0
+          Description: shaweelTimer
+          EOF
+
+          printf '#!/bin/bash\npython3 /usr/lib/shaweel-timer/main.py "$@"' \
+            > deb-pkg/usr/bin/shaweel-timer
+          chmod +x deb-pkg/usr/bin/shaweel-timer
+
+          dpkg-deb --build deb-pkg shaweel-timer.deb
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: shaweelTimer-debian
+          path: shaweel-timer.deb
+  build-rpm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install rpm tools
+        run: sudo apt-get install -y rpm
+
+      - name: Build .rpm
+        run: |
+          mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+          mkdir -p ~/rpmbuild/SOURCES/shaweel-timer-1.0.0/usr/bin
+          mkdir -p ~/rpmbuild/SOURCES/shaweel-timer-1.0.0/usr/lib/shaweel-timer
+
+          cp main.py ~/rpmbuild/SOURCES/shaweel-timer-1.0.0/usr/lib/shaweel-timer/
+
+          printf '#!/bin/bash\npython3 /usr/lib/shaweel-timer/main.py "$@"' \
+            > ~/rpmbuild/SOURCES/shaweel-timer-1.0.0/usr/bin/shaweel-timer
+          chmod +x ~/rpmbuild/SOURCES/shaweel-timer-1.0.0/usr/bin/shaweel-timer
+
+          cat > ~/rpmbuild/SPECS/shaweel-timer.spec << EOF
+          Name:           shaweel-timer
+          Version:        1.0.0
+          Release:        1%{?dist}
+          Summary:        shaweelTimer
+          License:        MIT
+          Requires:       python3, python3-gobject, gtk4
+
+          %description
+          shaweelTimer
+
+          %install
+          cp -r %{_sourcedir}/shaweel-timer-1.0.0/* %{buildroot}/
+
+          %files
+          /usr/bin/shaweel-timer
+          /usr/lib/shaweel-timer/main.py
+          EOF
+
+          rpmbuild -bb ~/rpmbuild/SPECS/shaweel-timer.spec
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: shaweelTimer-fedora
+          path: ~/rpmbuild/RPMS/noarch/shaweel-timer-*.rpm
+  build-flatpak:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install flatpak tools
+        run: |
+          sudo apt-get install -y flatpak flatpak-builder
+          sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+          sudo flatpak install -y flathub org.gnome.Platform//46 org.gnome.Sdk//46
+
+      - name: Create manifest
+        run: |
+          cat > com.shaweel.Timer.yml << EOF
+          app-id: com.shaweel.Timer
+          runtime: org.gnome.Platform
+          runtime-version: '46'
+          sdk: org.gnome.Sdk
+          command: shaweel-timer
+          modules:
+            - name: shaweel-timer
+              buildsystem: simple
+              build-commands:
+                - install -Dm755 main.py /app/bin/shaweel-timer
+                - sed -i '1s|^|#!/usr/bin/env python3\n|' /app/bin/shaweel-timer
+              sources:
+                - type: file
+                  path: main.py
+          EOF
+
+      - name: Build Flatpak
+        run: |
+          flatpak-builder --force-clean --repo=repo build-dir com.shaweel.Timer.yml
+          flatpak build-bundle repo shaweel-timer.flatpak com.shaweel.Timer
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: shaweelTimer-flatpak
+          path: shaweel-timer.flatpak
