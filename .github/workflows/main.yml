@@ -96,14 +96,14 @@ jobs:
       - name: Build .rpm
         run: |
           mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-          mkdir -p ~/rpmbuild/SOURCES/shaweelTimer-1.0.0/usr/bin
-          mkdir -p ~/rpmbuild/SOURCES/shaweelTimer-1.0.0/usr/lib/shaweelTimer
-          cp *.py ~/rpmbuild/SOURCES/shaweelTimer-1.0.0/usr/lib/shaweelTimer/
+          mkdir -p ~/rpmbuild/SOURCES/shaweeltimer-1.0.0/usr/bin
+          mkdir -p ~/rpmbuild/SOURCES/shaweeltimer-1.0.0/usr/lib/shaweeltimer
+          cp *.py ~/rpmbuild/SOURCES/shaweeltimer-1.0.0/usr/lib/shaweeltimer/
           {
             echo '#!/bin/bash'
-            echo 'python3 /usr/lib/shaweelTimer/main.py "$@"'
-          } > ~/rpmbuild/SOURCES/shaweelTimer-1.0.0/usr/bin/shaweelTimer
-          chmod +x ~/rpmbuild/SOURCES/shaweelTimer-1.0.0/usr/bin/shaweelTimer
+            echo 'python3 /usr/lib/shaweeltimer/main.py "$@"'
+          } > ~/rpmbuild/SOURCES/shaweeltimer-1.0.0/usr/bin/shaweeltimer
+          chmod +x ~/rpmbuild/SOURCES/shaweeltimer-1.0.0/usr/bin/shaweeltimer
           {
             echo 'Name: shaweelTimer'
             echo 'Version: 1.0.0'
@@ -117,28 +117,28 @@ jobs:
             echo 'shaweelTimer'
             echo ''
             echo '%install'
-            echo 'cp -r %{_sourcedir}/shaweelTimer-1.0.0/* %{buildroot}/'
+            echo 'cp -r %{_sourcedir}/shaweeltimer-1.0.0/* %{buildroot}/'
             echo ''
             echo '%files'
-            echo '/usr/bin/shaweelTimer'
-            echo '/usr/lib/shaweelTimer/main.py'
-            echo '/usr/lib/shaweelTimer/config.py'
-            echo '/usr/lib/shaweelTimer/status.py'
-            echo '/usr/share/applications/shaweelTimer.desktop'
-            echo '/usr/share/icons/hicolor/256x256/apps/shaweelTimer.png'
-          } > ~/rpmbuild/SPECS/shaweelTimer.spec
-          mkdir -p ~/rpmbuild/SOURCES/shaweelTimer-1.0.0/usr/share/icons/hicolor/256x256/apps
-          cp shaweelTimer.png ~/rpmbuild/SOURCES/shaweelTimer-1.0.0/usr/share/icons/hicolor/256x256/apps/shaweelTimer.png
-          mkdir -p ~/rpmbuild/SOURCES/shaweelTimer-1.0.0/usr/share/applications
+            echo '/usr/bin/shaweeltimer'
+            echo '/usr/lib/shaweeltimer/main.py'
+            echo '/usr/lib/shaweeltimer/config.py'
+            echo '/usr/lib/shaweeltimer/status.py'
+            echo '/usr/share/applications/shaweeltimer.desktop'
+            echo '/usr/share/icons/hicolor/256x256/apps/shaweeltimer.png'
+          } > ~/rpmbuild/SPECS/shaweeltimer.spec
+          mkdir -p ~/rpmbuild/SOURCES/shaweeltimer-1.0.0/usr/share/icons/hicolor/256x256/apps
+          cp shaweelTimer.png ~/rpmbuild/SOURCES/shaweeltimer-1.0.0/usr/share/icons/hicolor/256x256/apps/shaweeltimer.png
+          mkdir -p ~/rpmbuild/SOURCES/shaweeltimer-1.0.0/usr/share/applications
           {
           echo '[Desktop Entry]'
           echo 'Name=shaweelTimer'
           echo 'Exec=shaweeltimer'
-          echo 'Icon=shaweelTimer'
+          echo 'Icon=shaweeltimer'
           echo 'Type=Application'
           echo 'Categories=Utility;'
-          } > ~/rpmbuild/SOURCES/shaweelTimer-1.0.0/usr/share/applications/shaweelTimer.desktop
-          rpmbuild -bb ~/rpmbuild/SPECS/shaweelTimer.spec
+          } > ~/rpmbuild/SOURCES/shaweeltimer-1.0.0/usr/share/applications/shaweeltimer.desktop
+          rpmbuild -bb ~/rpmbuild/SPECS/shaweeltimer.spec
       - name: Rename RPM
         run: cp ~/rpmbuild/RPMS/noarch/shaweelTimer-*.rpm ~/rpmbuild/RPMS/noarch/shaweelTimer.rpm
       - name: Upload RPM
