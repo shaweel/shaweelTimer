@@ -21,12 +21,6 @@ jobs:
             mingw-w64-x86_64-python-pip
             mingw-w64-x86_64-python-gobject
             mingw-w64-x86_64-python-cairo
-      - name: Get version
-        id: version
-        shell: bash
-        run: |
-          VERSION=$(grep -oP '(?<=version=")[^"]+' me.shaweel.shaweelTimer.metainfo.xml | head -1)
-          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
       - name: Cache pip
         uses: actions/cache@v4
         with:
