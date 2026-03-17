@@ -76,7 +76,12 @@ jobs:
           mkdir -p deb-pkg/DEBIAN
           mkdir -p deb-pkg/usr/bin
           mkdir -p deb-pkg/usr/lib/shaweeltimer
+          mkdir -p deb-pkg/usr/share/icons/hicolor/256x256/apps
+          mkdir -p deb-pkg/usr/share/applications
+          mkdir -p deb-pkg/usr/share/metainfo
           cp *.py deb-pkg/usr/lib/shaweeltimer/
+          cp shaweelTimer.png deb-pkg/usr/share/icons/hicolor/256x256/apps/shaweeltimer.png
+          cp me.shaweel.shaweelTimer.metainfo.xml deb-pkg/usr/share/metainfo/
           {
             echo 'Package: shaweeltimer'
             echo 'Version: ${{ steps.version.outputs.VERSION }}'
@@ -90,18 +95,14 @@ jobs:
             echo 'GSK_RENDERER=ngl python3 /usr/lib/shaweeltimer/main.py "$@"'
           } > deb-pkg/usr/bin/shaweeltimer
           chmod +x deb-pkg/usr/bin/shaweeltimer
-          mkdir -p deb-pkg/usr/share/icons/hicolor/256x256/apps
-          cp shaweelTimer.png deb-pkg/usr/share/icons/hicolor/256x256/apps/shaweeltimer.png
-          mkdir -p deb-pkg/usr/share/applications
           {
-          echo '[Desktop Entry]'
-          echo 'Name=shaweelTimer'
-          echo 'Exec=shaweeltimer'
-          echo 'Icon=shaweeltimer'
-          echo 'Type=Application'
-          echo 'Categories=Utility;'
+            echo '[Desktop Entry]'
+            echo 'Name=shaweelTimer'
+            echo 'Exec=shaweeltimer'
+            echo 'Icon=shaweeltimer'
+            echo 'Type=Application'
+            echo 'Categories=Utility;'
           } > deb-pkg/usr/share/applications/shaweeltimer.desktop
-
           dpkg-deb --build deb-pkg shaweelTimer.deb
       - uses: actions/upload-artifact@v6
         with:
@@ -129,12 +130,25 @@ jobs:
           mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
           mkdir -p ~/rpmbuild/SOURCES/shaweeltimer-${{ steps.version.outputs.VERSION }}/usr/bin
           mkdir -p ~/rpmbuild/SOURCES/shaweeltimer-${{ steps.version.outputs.VERSION }}/usr/lib/shaweeltimer
+          mkdir -p ~/rpmbuild/SOURCES/shaweeltimer-${{ steps.version.outputs.VERSION }}/usr/share/icons/hicolor/256x256/apps
+          mkdir -p ~/rpmbuild/SOURCES/shaweeltimer-${{ steps.version.outputs.VERSION }}/usr/share/applications
+          mkdir -p ~/rpmbuild/SOURCES/shaweeltimer-${{ steps.version.outputs.VERSION }}/usr/share/metainfo
           cp *.py ~/rpmbuild/SOURCES/shaweeltimer-${{ steps.version.outputs.VERSION }}/usr/lib/shaweeltimer/
+          cp shaweelTimer.png ~/rpmbuild/SOURCES/shaweeltimer-${{ steps.version.outputs.VERSION }}/usr/share/icons/hicolor/256x256/apps/shaweeltimer.png
+          cp me.shaweel.shaweelTimer.metainfo.xml ~/rpmbuild/SOURCES/shaweeltimer-${{ steps.version.outputs.VERSION }}/usr/share/metainfo/
           {
             echo '#!/bin/bash'
             echo 'python3 /usr/lib/shaweeltimer/main.py "$@"'
           } > ~/rpmbuild/SOURCES/shaweeltimer-${{ steps.version.outputs.VERSION }}/usr/bin/shaweeltimer
           chmod +x ~/rpmbuild/SOURCES/shaweeltimer-${{ steps.version.outputs.VERSION }}/usr/bin/shaweeltimer
+          {
+            echo '[Desktop Entry]'
+            echo 'Name=shaweelTimer'
+            echo 'Exec=shaweeltimer'
+            echo 'Icon=shaweeltimer'
+            echo 'Type=Application'
+            echo 'Categories=Utility;'
+          } > ~/rpmbuild/SOURCES/shaweeltimer-${{ steps.version.outputs.VERSION }}/usr/share/applications/shaweeltimer.desktop
           {
             echo 'Name: shaweelTimer'
             echo 'Version: ${{ steps.version.outputs.VERSION }}'
@@ -157,18 +171,8 @@ jobs:
             echo '/usr/lib/shaweeltimer/status.py'
             echo '/usr/share/applications/shaweeltimer.desktop'
             echo '/usr/share/icons/hicolor/256x256/apps/shaweeltimer.png'
+            echo '/usr/share/metainfo/me.shaweel.shaweelTimer.metainfo.xml'
           } > ~/rpmbuild/SPECS/shaweeltimer.spec
-          mkdir -p ~/rpmbuild/SOURCES/shaweeltimer-${{ steps.version.outputs.VERSION }}/usr/share/icons/hicolor/256x256/apps
-          cp shaweelTimer.png ~/rpmbuild/SOURCES/shaweeltimer-${{ steps.version.outputs.VERSION }}/usr/share/icons/hicolor/256x256/apps/shaweeltimer.png
-          mkdir -p ~/rpmbuild/SOURCES/shaweeltimer-${{ steps.version.outputs.VERSION }}/usr/share/applications
-          {
-          echo '[Desktop Entry]'
-          echo 'Name=shaweelTimer'
-          echo 'Exec=shaweeltimer'
-          echo 'Icon=shaweeltimer'
-          echo 'Type=Application'
-          echo 'Categories=Utility;'
-          } > ~/rpmbuild/SOURCES/shaweeltimer-${{ steps.version.outputs.VERSION }}/usr/share/applications/shaweeltimer.desktop
           rpmbuild -bb ~/rpmbuild/SPECS/shaweeltimer.spec
       - name: Rename RPM
         run: cp ~/rpmbuild/RPMS/noarch/shaweelTimer-*.rpm ~/rpmbuild/RPMS/noarch/shaweelTimer.rpm
@@ -177,6 +181,7 @@ jobs:
         with:
           name: shaweelTimerFedora
           path: ~/rpmbuild/RPMS/noarch/shaweelTimer.rpm
+
   buildFlatpak:
     runs-on: ubuntu-latest
     steps:
@@ -233,6 +238,7 @@ jobs:
             echo '      - install -Dm755 status.py /app/bin/status.py'
             echo '      - install -Dm644 shaweelTimer.png /app/share/icons/hicolor/256x256/apps/me.shaweel.shaweelTimer.png'
             echo '      - install -Dm644 me.shaweel.shaweelTimer.desktop /app/share/applications/me.shaweel.shaweelTimer.desktop'
+            echo '      - install -Dm644 me.shaweel.shaweelTimer.metainfo.xml /app/share/metainfo/me.shaweel.shaweelTimer.metainfo.xml'
             echo '      - sed -i "1s|^|#!/usr/bin/env python3\n|" /app/bin/shaweeltimer'
             echo '    sources:'
             echo '      - type: file'
@@ -245,6 +251,8 @@ jobs:
             echo '        path: shaweelTimer.png'
             echo '      - type: file'
             echo '        path: me.shaweel.shaweelTimer.desktop'
+            echo '      - type: file'
+            echo '        path: me.shaweel.shaweelTimer.metainfo.xml'
           } > me.shaweel.shaweelTimer.yml
       - name: Build Flatpak
         run: |
