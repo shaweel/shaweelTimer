@@ -5,14 +5,14 @@ set "RED=%ESC%[31m"
 set "GREEN=%ESC%[32m"
 set "CYAN=%ESC%[36m"
 set "RESET=%ESC%[0m"
+set "APOS='"
 
 echo %CYAN%--------------------------------%RESET%
 echo %CYAN%Currently in start.bat%RESET%
 echo %CYAN%--------------------------------%RESET%
 
-winget list MSYS2.MSYS2 >nul 2>&1
-if errorlevel 1 (
-	echo %CYAN%MSYS2%RED% is not installed. %GREEN%Installing using %CYAN%winget.%RESET%
+reg query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MSYS2" >nul 2>&1if errorlevel 1 (
+	echo %CYAN%MSYS2%RED% isn%APOS%t installed. %GREEN%Installing using %CYAN%winget.%RESET%
 	winget install MSYS2.MSYS2
 ) else (
 	echo %CYAN%MSYS2 %GREEN%is installed. Good.%RESET%
