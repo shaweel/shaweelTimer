@@ -73,10 +73,11 @@ jobs:
           printf '#!/bin/bash\npython3 /usr/lib/shaweelTimer/main.py "$@"' \
             > ~/rpmbuild/SOURCES/shaweelTimer-1.0.0/usr/bin/shaweelTimer
           chmod +x ~/rpmbuild/SOURCES/shaweelTimer-1.0.0/usr/bin/shaweelTimer
-          printf 'Name: shaweelTimer\nVersion: 1.0.0\nRelease: 1%%{?dist}\nSummary: shaweelTimer\nLicense: MIT\nRequires: python3, python3-gobject, gtk4\n\n%%description\nshaweelTimer\n\n%%install\ncp -r %%{_sourcedir}/shaweelTimer-1.0.0/* %%{buildroot}/\n\n%%files\n/usr/bin/shaweelTimer\n/usr/lib/shaweelTimer/main.py\n' \
+          printf 'Name: shaweelTimer\nVersion: 1.0.0\nRelease: 1%%{?dist}\nSummary: shaweelTimer\nLicense: MIT\nBuildArch: noarch\nRequires: python3, python3-gobject, gtk4\n\n%%description\nshaweelTimer\n\n%%install\ncp -r %%{_sourcedir}/shaweelTimer-1.0.0/* %%{buildroot}/\n\n%%files\n/usr/bin/shaweelTimer\n/usr/lib/shaweelTimer/main.py\n' \
             > ~/rpmbuild/SPECS/shaweelTimer.spec
           rpmbuild -bb ~/rpmbuild/SPECS/shaweelTimer.spec
-      - uses: actions/upload-artifact@v5
+      - name: Upload RPM
+        uses: actions/upload-artifact@v5
         with:
           name: shaweelTimer-fedora
           path: ~/rpmbuild/RPMS/noarch/shaweelTimer-*.rpm
