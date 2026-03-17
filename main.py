@@ -40,6 +40,10 @@ def openPreferences(button: Gtk.Button):
 		optionBox.append(widget)
 		return optionBox
 
+	def saveColor(widget, configPath):
+		rgba = widget.get_rgba()
+		config.writeToConfig(configPath, [rgba.get_red(), rgba.get_green(), rgba.get_blue(), rgba.get_alpha()])
+
 	backgroundOpacity = Gtk.SpinButton()
 	backgroundOpacity.set_range(0, 100)
 	backgroundOpacity.set_increments(1, 1)
@@ -50,15 +54,18 @@ def openPreferences(button: Gtk.Button):
 			button.set_text(f"{value}%")
 			return True
 	backgroundOpacity.connect("output", formatButton)
+	backgroundOpacity.connect("changed", config.writeToConfig("preferences.backgroundOpacity", backgroundOpacity.get_value()))
 
 	textSize = Gtk.SpinButton()
 	textSize.set_range(8, 120)
 	textSize.set_increments(1, 1)
 	textSize.set_value(config.getFromConfig("preferences.textSize"))
 	textSize.set_width_chars(4)
+	textSize.connect("changed", config.writeToConfig("preferences.textSize", textSize.get_value()))
 
 	textColor = Gtk.ColorDialogButton(dialog=Gtk.ColorDialog())
 	textColor.set_rgba(Gdk.RGBA(*config.getFromConfig("preferences.textColor")))
+	textColor.connect("changed", lambda widget: widget.saveColor(widget, "preferences.textColor"))
 
 	textOutline = Gtk.CheckButton()
 	textOutline.connect("toggled", lambda button: [
@@ -66,10 +73,12 @@ def openPreferences(button: Gtk.Button):
 		outlineWidth.set_sensitive(button.get_active())
 		])
 	textOutline.set_active(config.getFromConfig("preferences.textOutline"))
+	textOutline.connect("changed", config.writeToConfig("preferences.textOutline", textOutline.get_active()))
 
 	outlineColor = Gtk.ColorDialogButton(dialog=Gtk.ColorDialog())
 	outlineColor.set_rgba(Gdk.RGBA(*config.getFromConfig("preferences.outlineColor")))
 	outlineColor.set_sensitive(textOutline.get_active())
+	outlineColor.connect("changed", lambda widget: widget.saveColor(widget, "preferences.textColor"))
 
 	outlineWidth = Gtk.SpinButton()
 	outlineWidth.set_range(1, 20)

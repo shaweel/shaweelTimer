@@ -7,7 +7,7 @@ echo -e "${CYAN}Currently in start.sh${RESET}"
 echo -e "${CYAN}--------------------------------${RESET}"
 
 venvPip() {
-	.venv/bin/pip "$@"
+	.venv/bin/python -m pip "$@"
 }
 
 if ! command -v python3.14 &> /dev/null; then
