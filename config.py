@@ -6,14 +6,19 @@ configFolder = pathlib.Path.home() / ".config" / "shaweelTimer"
 configFolder.mkdir(parents=True, exist_ok=True)
 
 defaultConfig = {
-	"time": [0, 0, 30],
+	"time": {
+		"hours": 0,
+		"minutes": 0,
+		"seconds": 30
+	},
 	"preferences": {
-		"backgroundOpacity": 20,
-		"textSize": 24,
+		"backgroundOpacity": 80,
+		"fontSize": 40,
+		"fontWeight": 900,
 		"textColor": [1, 1, 1, 1],
 		"textOutline": False,
 		"outlineColor": [0, 0, 0, 1],
-		"outlineWidth": 5,
+		"outlineWidth": 30,
 		"textShadow": False,
 		"shadowColor": [0, 0, 0, 1]
 	}
@@ -45,12 +50,11 @@ def correctConfig(config, path):
 
 def saveConfig():
 	configFile.write_text(json.dumps(config))
-	status.success("Config saved")
 
 def getFullConfig():
 	return config
 
-def getFromConfig(path):
+def readFromConfig(path):
 	pathArray = path.split(".")
 	current = config
 	for entry in pathArray[:-1]:
@@ -77,3 +81,4 @@ except Exception as exception:
 
 config = correctConfig(config, "")
 saveConfig()
+status.success("Config saved")
