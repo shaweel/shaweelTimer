@@ -55,11 +55,19 @@ jobs:
           mkdir -p deb-pkg/DEBIAN
           mkdir -p deb-pkg/usr/bin
           mkdir -p deb-pkg/usr/lib/shaweeltimer
-          cp main.py deb-pkg/usr/lib/shaweeltimer/
-          printf 'Package: shaweeltimer\nVersion: 1.0.0\nArchitecture: all\nMaintainer: shaweel <shaweel@proton.me>\nDepends: python3, python3-gi, python3-gi-cairo, gir1.2-gtk-4.0\nDescription: shaweelTimer\n' \
-            > deb-pkg/DEBIAN/control
-          printf '#!/bin/bash\npython3 /usr/lib/shaweeltimer/main.py "$@"' \
-            > deb-pkg/usr/bin/shaweeltimer
+          cp *.py deb-pkg/usr/lib/shaweeltimer/
+          {
+            echo 'Package: shaweeltimer'
+            echo 'Version: 1.0.0'
+            echo 'Architecture: all'
+            echo 'Maintainer: shaweel <shaweel@proton.me>'
+            echo 'Depends: python3, python3-gi, python3-gi-cairo, gir1.2-gtk-4.0'
+            echo 'Description: shaweelTimer'
+          } > deb-pkg/DEBIAN/control
+          {
+            echo '#!/bin/bash'
+            echo 'python3 /usr/lib/shaweeltimer/main.py "$@"'
+          } > deb-pkg/usr/bin/shaweeltimer
           chmod +x deb-pkg/usr/bin/shaweeltimer
           dpkg-deb --build deb-pkg shaweelTimer.deb
       - uses: actions/upload-artifact@v6
@@ -78,12 +86,33 @@ jobs:
           mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
           mkdir -p ~/rpmbuild/SOURCES/shaweelTimer-1.0.0/usr/bin
           mkdir -p ~/rpmbuild/SOURCES/shaweelTimer-1.0.0/usr/lib/shaweelTimer
-          cp main.py ~/rpmbuild/SOURCES/shaweelTimer-1.0.0/usr/lib/shaweelTimer/
-          printf '#!/bin/bash\npython3 /usr/lib/shaweelTimer/main.py "$@"' \
-            > ~/rpmbuild/SOURCES/shaweelTimer-1.0.0/usr/bin/shaweelTimer
+          cp *.py ~/rpmbuild/SOURCES/shaweelTimer-1.0.0/usr/lib/shaweelTimer/
+          {
+            echo '#!/bin/bash'
+            echo 'python3 /usr/lib/shaweelTimer/main.py "$@"'
+          } > ~/rpmbuild/SOURCES/shaweelTimer-1.0.0/usr/bin/shaweelTimer
           chmod +x ~/rpmbuild/SOURCES/shaweelTimer-1.0.0/usr/bin/shaweelTimer
-          printf 'Name: shaweelTimer\nVersion: 1.0.0\nRelease: 1%%{?dist}\nSummary: shaweelTimer\nLicense: MIT\nBuildArch: noarch\nRequires: python3, python3-gobject, gtk4\n\n%%description\nshaweelTimer\n\n%%install\ncp -r %%{_sourcedir}/shaweelTimer-1.0.0/* %%{buildroot}/\n\n%%files\n/usr/bin/shaweelTimer\n/usr/lib/shaweelTimer/main.py\n' \
-            > ~/rpmbuild/SPECS/shaweelTimer.spec
+          {
+            echo 'Name: shaweelTimer'
+            echo 'Version: 1.0.0'
+            echo 'Release: 1%{?dist}'
+            echo 'Summary: shaweelTimer'
+            echo 'License: MIT'
+            echo 'BuildArch: noarch'
+            echo 'Requires: python3, python3-gobject, gtk4'
+            echo ''
+            echo '%description'
+            echo 'shaweelTimer'
+            echo ''
+            echo '%install'
+            echo 'cp -r %{_sourcedir}/shaweelTimer-1.0.0/* %{buildroot}/'
+            echo ''
+            echo '%files'
+            echo '/usr/bin/shaweelTimer'
+            echo '/usr/lib/shaweelTimer/main.py'
+            echo '/usr/lib/shaweelTimer/config.py'
+            echo '/usr/lib/shaweelTimer/status.py'
+          } > ~/rpmbuild/SPECS/shaweelTimer.spec
           rpmbuild -bb ~/rpmbuild/SPECS/shaweelTimer.spec
       - name: Rename RPM
         run: cp ~/rpmbuild/RPMS/noarch/shaweelTimer-*.rpm ~/rpmbuild/RPMS/noarch/shaweelTimer.rpm
