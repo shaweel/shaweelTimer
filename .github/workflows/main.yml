@@ -183,12 +183,17 @@ jobs:
           else
             echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
           fi
+      - name: Cache flatpak runtimes
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/flatpak
+          key: flatpak-gnome-49
       - name: Install flatpak tools
         run: |
           sudo apt-get update
           sudo apt-get install -y --fix-missing flatpak flatpak-builder
           sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-          sudo flatpak install -y flathub org.gnome.Platform//49 org.gnome.Sdk//49
+          sudo flatpak install --user -y flathub org.gnome.Platform//49 org.gnome.Sdk//49
 
       - name: Create manifest
         run: |
