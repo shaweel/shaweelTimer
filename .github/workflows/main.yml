@@ -66,7 +66,7 @@ jobs:
           } > deb-pkg/DEBIAN/control
           {
             echo '#!/bin/bash'
-            echo 'python3 /usr/lib/shaweeltimer/main.py "$@"'
+            echo 'GSK_RENDERER=ngl python3 /usr/lib/shaweeltimer/main.py "$@"'
           } > deb-pkg/usr/bin/shaweeltimer
           chmod +x deb-pkg/usr/bin/shaweeltimer
           mkdir -p deb-pkg/usr/share/icons/hicolor/256x256/apps
