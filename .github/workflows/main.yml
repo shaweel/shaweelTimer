@@ -69,6 +69,18 @@ jobs:
             echo 'python3 /usr/lib/shaweeltimer/main.py "$@"'
           } > deb-pkg/usr/bin/shaweeltimer
           chmod +x deb-pkg/usr/bin/shaweeltimer
+          mkdir -p deb-pkg/usr/share/icons/hicolor/500x500/apps
+          cp shaweelTimer.png deb-pkg/usr/share/icons/hicolor/500x500/apps/shaweeltimer.png
+          mkdir -p deb-pkg/usr/share/applications
+          {
+          echo '[Desktop Entry]'
+          echo 'Name=shaweelTimer'
+          echo 'Exec=shaweeltimer'
+          echo 'Icon=shaweeltimer'
+          echo 'Type=Application'
+          echo 'Categories=Utility;'
+          } > deb-pkg/usr/share/applications/shaweeltimer.desktop
+
           dpkg-deb --build deb-pkg shaweelTimer.deb
       - uses: actions/upload-artifact@v6
         with:
@@ -112,7 +124,20 @@ jobs:
             echo '/usr/lib/shaweelTimer/main.py'
             echo '/usr/lib/shaweelTimer/config.py'
             echo '/usr/lib/shaweelTimer/status.py'
+            echo '/usr/share/applications/shaweelTimer.desktop'
+            echo '/usr/share/icons/hicolor/500x500/apps/shaweelTimer.png'
           } > ~/rpmbuild/SPECS/shaweelTimer.spec
+          mkdir -p ~/rpmbuild/SOURCES/shaweelTimer-1.0.0/usr/share/icons/hicolor/500x500/apps
+          cp shaweelTimer.png ~/rpmbuild/SOURCES/shaweelTimer-1.0.0/usr/share/icons/hicolor/500x500/apps/shaweelTimer.png
+          mkdir -p ~/rpmbuild/SOURCES/shaweelTimer-1.0.0/usr/share/applications
+          {
+          echo '[Desktop Entry]'
+          echo 'Name=shaweelTimer'
+          echo 'Exec=shaweeltimer'
+          echo 'Icon=shaweelTimer'
+          echo 'Type=Application'
+          echo 'Categories=Utility;'
+          } > ~/rpmbuild/SOURCES/shaweelTimer-1.0.0/usr/share/applications/shaweelTimer.desktop
           rpmbuild -bb ~/rpmbuild/SPECS/shaweelTimer.spec
       - name: Rename RPM
         run: cp ~/rpmbuild/RPMS/noarch/shaweelTimer-*.rpm ~/rpmbuild/RPMS/noarch/shaweelTimer.rpm
