@@ -111,7 +111,7 @@ jobs:
             echo 'Summary: shaweelTimer'
             echo 'License: MIT'
             echo 'BuildArch: noarch'
-            echo 'Requires: python3, python3-gobject, gtk4, libadwaita'
+            echo 'Requires: python3, python3-gobject, gtk4, libadwaita, libGLESv2.so.2'
             echo ''
             echo '%description'
             echo 'shaweelTimer'
