@@ -11,6 +11,15 @@
   <launchable type="desktop-id">me.shaweel.shaweelTimer.desktop</launchable>
   <icon type="stock">me.shaweel.shaweelTimer</icon>
   <url type="homepage">https://github.com/shaweel/shaweelTimer</url>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/shaweel/shaweelTimer/main/assets/screenshots/all.png</image>
+      <image>https://raw.githubusercontent.com/shaweel/shaweelTimer/main/assets/screenshots/main.png</image>
+      <image>https://raw.githubusercontent.com/shaweel/shaweelTimer/main/assets/screenshots/preferences.png</image>
+      <image>https://raw.githubusercontent.com/shaweel/shaweelTimer/main/assets/screenshots/colorfulConfig.png</image>
+      <caption>Main window</caption>
+    </screenshot>
+  </screenshots>
   <releases>
     <release version="1.0.0" date="2026-03-18"/>
   </releases>
