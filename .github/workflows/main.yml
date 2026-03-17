@@ -25,13 +25,8 @@ jobs:
         id: version
         shell: bash
         run: |
-          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "1.0.0")
-          LAST_TAG=${LAST_TAG#v}
-          if [[ "$GITHUB_REF_TYPE" == "branch" ]]; then
-            echo "VERSION=${LAST_TAG}~dev" >> $GITHUB_OUTPUT
-          else
-            echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
-          fi
+          VERSION=$(grep -oP '(?<=version=")[^"]+' me.shaweel.shaweelTimer.metainfo.xml | head -1)
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
       - name: Cache pip
         uses: actions/cache@v4
         with:
@@ -64,13 +59,8 @@ jobs:
       - name: Get version
         id: version
         run: |
-          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "1.0.0")
-          LAST_TAG=${LAST_TAG#v}
-          if [[ "$GITHUB_REF_TYPE" == "branch" ]]; then
-            echo "VERSION=${LAST_TAG}~dev" >> $GITHUB_OUTPUT
-          else
-            echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
-          fi
+          VERSION=$(grep -oP '(?<=version=")[^"]+' me.shaweel.shaweelTimer.metainfo.xml | head -1)
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
       - name: Build .deb
         run: |
           mkdir -p deb-pkg/DEBIAN
@@ -116,13 +106,8 @@ jobs:
       - name: Get version
         id: version
         run: |
-          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "1.0.0")
-          LAST_TAG=${LAST_TAG#v}
-          if [[ "$GITHUB_REF_TYPE" == "branch" ]]; then
-            echo "VERSION=${LAST_TAG}~dev" >> $GITHUB_OUTPUT
-          else
-            echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
-          fi
+          VERSION=$(grep -oP '(?<=version=")[^"]+' me.shaweel.shaweelTimer.metainfo.xml | head -1)
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
       - name: Install rpm tools
         run: sudo apt-get install -y rpm
       - name: Build .rpm
@@ -189,13 +174,8 @@ jobs:
       - name: Get version
         id: version
         run: |
-          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "1.0.0")
-          LAST_TAG=${LAST_TAG#v}
-          if [[ "$GITHUB_REF_TYPE" == "branch" ]]; then
-            echo "VERSION=${LAST_TAG}~dev" >> $GITHUB_OUTPUT
-          else
-            echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
-          fi
+          VERSION=$(grep -oP '(?<=version=")[^"]+' me.shaweel.shaweelTimer.metainfo.xml | head -1)
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
       - name: Cache flatpak runtimes
         uses: actions/cache@v4
         with:
