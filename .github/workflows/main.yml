@@ -7,7 +7,7 @@ jobs:
   build-windows:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: msys2/setup-msys2@v2
         with:
           msystem: MINGW64
@@ -32,7 +32,7 @@ jobs:
             --collect-all gi \
             main.py
       - name: Upload EXE
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: shaweelTimer-windows
           path: dist/shaweelTimer.exe
@@ -40,7 +40,7 @@ jobs:
   build-deb:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Build .deb
         run: |
           mkdir -p deb-pkg/DEBIAN
@@ -53,7 +53,7 @@ jobs:
             > deb-pkg/usr/bin/shaweeltimer
           chmod +x deb-pkg/usr/bin/shaweeltimer
           dpkg-deb --build deb-pkg shaweelTimer.deb
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: shaweelTimer-debian
           path: shaweelTimer.deb
@@ -61,7 +61,7 @@ jobs:
   build-rpm:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Install rpm tools
         run: sudo apt-get install -y rpm
       - name: Build .rpm
@@ -79,7 +79,7 @@ jobs:
       - name: Rename RPM
         run: cp ~/rpmbuild/RPMS/noarch/shaweelTimer-*.rpm ~/rpmbuild/RPMS/noarch/shaweelTimer.rpm
       - name: Upload RPM
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: shaweelTimer-fedora
           path: ~/rpmbuild/RPMS/noarch/shaweelTimer.rpm
