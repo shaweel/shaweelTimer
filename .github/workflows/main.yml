@@ -25,10 +25,10 @@ jobs:
         shell: msys2 {0}
         run: |
           pyinstaller --onefile --name "shaweelTimer" \
-            --add-data "/mingw64/lib/girepository-1.0:lib/girepository-1.0" \
-            --add-data "/mingw64/share/glib-2.0/schemas:share/glib-2.0/schemas" \
-            --add-data "/mingw64/lib/gdk-pixbuf-2.0:lib/gdk-pixbuf-2.0" \
-            --add-data "/mingw64/share/icons:share/icons" \
+            --add-data "$MINGW_PREFIX/lib/girepository-1.0:lib/girepository-1.0" \
+            --add-data "$MINGW_PREFIX/share/glib-2.0/schemas:share/glib-2.0/schemas" \
+            --add-data "$MINGW_PREFIX/lib/gdk-pixbuf-2.0:lib/gdk-pixbuf-2.0" \
+            --add-data "$MINGW_PREFIX/share/icons:share/icons" \
             --collect-all gi \
             main.py
       - name: Upload EXE
@@ -76,8 +76,10 @@ jobs:
           printf 'Name: shaweelTimer\nVersion: 1.0.0\nRelease: 1%%{?dist}\nSummary: shaweelTimer\nLicense: MIT\nBuildArch: noarch\nRequires: python3, python3-gobject, gtk4\n\n%%description\nshaweelTimer\n\n%%install\ncp -r %%{_sourcedir}/shaweelTimer-1.0.0/* %%{buildroot}/\n\n%%files\n/usr/bin/shaweelTimer\n/usr/lib/shaweelTimer/main.py\n' \
             > ~/rpmbuild/SPECS/shaweelTimer.spec
           rpmbuild -bb ~/rpmbuild/SPECS/shaweelTimer.spec
+      - name: Rename RPM
+        run: cp ~/rpmbuild/RPMS/noarch/shaweelTimer-*.rpm ~/rpmbuild/RPMS/noarch/shaweelTimer.rpm
       - name: Upload RPM
         uses: actions/upload-artifact@v5
         with:
           name: shaweelTimer-fedora
-          path: ~/rpmbuild/RPMS/noarch/shaweelTimer-*.rpm
+          path: ~/rpmbuild/RPMS/noarch/shaweelTimer.rpm
