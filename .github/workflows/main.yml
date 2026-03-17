@@ -70,7 +70,7 @@ jobs:
           mkdir -p deb-pkg/usr/share/applications
           mkdir -p deb-pkg/usr/share/metainfo
           cp *.py deb-pkg/usr/lib/shaweeltimer/
-          cp shaweelTimer.png deb-pkg/usr/share/icons/hicolor/256x256/apps/shaweeltimer.png
+          cp assets/shaweelTimer.png deb-pkg/usr/share/icons/hicolor/256x256/apps/shaweeltimer.png
           cp me.shaweel.shaweelTimer.metainfo.xml deb-pkg/usr/share/metainfo/
           {
             echo 'Package: shaweeltimer'
@@ -119,7 +119,7 @@ jobs:
           mkdir -p ~/rpmbuild/SOURCES/shaweeltimer-${{ steps.version.outputs.VERSION }}/usr/share/applications
           mkdir -p ~/rpmbuild/SOURCES/shaweeltimer-${{ steps.version.outputs.VERSION }}/usr/share/metainfo
           cp *.py ~/rpmbuild/SOURCES/shaweeltimer-${{ steps.version.outputs.VERSION }}/usr/lib/shaweeltimer/
-          cp shaweelTimer.png ~/rpmbuild/SOURCES/shaweeltimer-${{ steps.version.outputs.VERSION }}/usr/share/icons/hicolor/256x256/apps/shaweeltimer.png
+          cp assets/shaweelTimer.png ~/rpmbuild/SOURCES/shaweeltimer-${{ steps.version.outputs.VERSION }}/usr/share/icons/hicolor/256x256/apps/shaweeltimer.png
           cp me.shaweel.shaweelTimer.metainfo.xml ~/rpmbuild/SOURCES/shaweeltimer-${{ steps.version.outputs.VERSION }}/usr/share/metainfo/
           {
             echo '#!/bin/bash'
@@ -228,7 +228,7 @@ jobs:
             echo '      - type: file'
             echo '        path: status.py'
             echo '      - type: file'
-            echo '        path: shaweelTimer.png'
+            echo '        path: assets/shaweelTimer.png'
             echo '      - type: file'
             echo '        path: me.shaweel.shaweelTimer.desktop'
             echo '      - type: file'
