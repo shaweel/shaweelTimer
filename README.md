@@ -1,0 +1,2 @@
+# shaweelTimer
+A minimalistic timer application written in Python using libadwaita for GNU+Linux, offering a customizable timer overlay with adjustable window opacity, text color, text size, and text outline color.
