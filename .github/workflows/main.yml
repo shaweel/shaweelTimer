@@ -200,7 +200,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y --fix-missing flatpak flatpak-builder
-          flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+          flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
           flatpak install --user -y flathub org.gnome.Platform//49 org.gnome.Sdk//49
 
       - name: Create manifest
