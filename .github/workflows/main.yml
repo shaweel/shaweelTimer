@@ -202,7 +202,16 @@ jobs:
           sudo apt-get install -y --fix-missing flatpak flatpak-builder
           flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
           flatpak install --user -y flathub org.gnome.Platform//49 org.gnome.Sdk//49
-
+      - name: Create desktop file
+        run: |
+          {
+            echo '[Desktop Entry]'
+            echo 'Name=shaweelTimer'
+            echo 'Exec=shaweeltimer'
+            echo 'Icon=me.shaweel.shaweelTimer'
+            echo 'Type=Application'
+            echo 'Categories=Utility;'
+          } > me.shaweel.shaweelTimer.desktop
       - name: Create manifest
         run: |
           {
@@ -211,6 +220,10 @@ jobs:
             echo "runtime-version: '49'"
             echo 'sdk: org.gnome.Sdk'
             echo 'command: shaweeltimer'
+            echo 'finish-args:'
+            echo '  - --socket=wayland'
+            echo '  - --socket=fallback-x11'
+            echo '  - --share=ipc'
             echo 'modules:'
             echo '  - name: shaweeltimer'
             echo '    buildsystem: simple'
@@ -219,6 +232,7 @@ jobs:
             echo '      - install -Dm755 config.py /app/bin/config.py'
             echo '      - install -Dm755 status.py /app/bin/status.py'
             echo '      - install -Dm644 shaweelTimer.png /app/share/icons/hicolor/256x256/apps/me.shaweel.shaweelTimer.png'
+            echo '      - install -Dm644 me.shaweel.shaweelTimer.desktop /app/share/applications/me.shaweel.shaweelTimer.desktop'
             echo '      - sed -i "1s|^|#!/usr/bin/env python3\n|" /app/bin/shaweeltimer'
             echo '    sources:'
             echo '      - type: file'
@@ -229,13 +243,13 @@ jobs:
             echo '        path: status.py'
             echo '      - type: file'
             echo '        path: shaweelTimer.png'
+            echo '      - type: file'
+            echo '        path: me.shaweel.shaweelTimer.desktop'
           } > me.shaweel.shaweelTimer.yml
-
       - name: Build Flatpak
         run: |
           flatpak-builder --force-clean --repo=repo build-dir me.shaweel.shaweelTimer.yml
           flatpak build-bundle repo shaweelTimer.flatpak me.shaweel.shaweelTimer
-
       - uses: actions/upload-artifact@v6
         with:
           name: shaweelTimerFlatpak
