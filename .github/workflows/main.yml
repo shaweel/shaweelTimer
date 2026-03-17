@@ -69,8 +69,8 @@ jobs:
             echo 'python3 /usr/lib/shaweeltimer/main.py "$@"'
           } > deb-pkg/usr/bin/shaweeltimer
           chmod +x deb-pkg/usr/bin/shaweeltimer
-          mkdir -p deb-pkg/usr/share/icons/hicolor/500x500/apps
-          cp shaweelTimer.png deb-pkg/usr/share/icons/hicolor/500x500/apps/shaweeltimer.png
+          mkdir -p deb-pkg/usr/share/icons/hicolor/256x256/apps
+          cp shaweelTimer.png deb-pkg/usr/share/icons/hicolor/256x256/apps/shaweeltimer.png
           mkdir -p deb-pkg/usr/share/applications
           {
           echo '[Desktop Entry]'
@@ -125,10 +125,10 @@ jobs:
             echo '/usr/lib/shaweelTimer/config.py'
             echo '/usr/lib/shaweelTimer/status.py'
             echo '/usr/share/applications/shaweelTimer.desktop'
-            echo '/usr/share/icons/hicolor/500x500/apps/shaweelTimer.png'
+            echo '/usr/share/icons/hicolor/256x256/apps/shaweelTimer.png'
           } > ~/rpmbuild/SPECS/shaweelTimer.spec
-          mkdir -p ~/rpmbuild/SOURCES/shaweelTimer-1.0.0/usr/share/icons/hicolor/500x500/apps
-          cp shaweelTimer.png ~/rpmbuild/SOURCES/shaweelTimer-1.0.0/usr/share/icons/hicolor/500x500/apps/shaweelTimer.png
+          mkdir -p ~/rpmbuild/SOURCES/shaweelTimer-1.0.0/usr/share/icons/hicolor/256x256/apps
+          cp shaweelTimer.png ~/rpmbuild/SOURCES/shaweelTimer-1.0.0/usr/share/icons/hicolor/256x256/apps/shaweelTimer.png
           mkdir -p ~/rpmbuild/SOURCES/shaweelTimer-1.0.0/usr/share/applications
           {
           echo '[Desktop Entry]'
