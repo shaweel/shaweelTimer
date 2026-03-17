@@ -12,7 +12,7 @@ echo %CYAN%--------------------------------%RESET%
 
 winget list MSYS2.MSYS2 >nul 2>&1
 if errorlevel 1 (
-	echo %CYAN%MSYS2%RED% isn't installed. %GREEN%Installing using %CYAN%winget.%RESET%
+	echo %CYAN%MSYS2%RED% is not installed. %GREEN%Installing using %CYAN%winget.%RESET%
 	winget install MSYS2.MSYS2
 ) else (
 	echo %CYAN%MSYS2 %GREEN%is installed. Good.%RESET%
