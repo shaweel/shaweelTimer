@@ -153,7 +153,7 @@ jobs:
 
       - name: Install flatpak tools
         run: |
-          sudo apt-get install -y flatpak flatpak-builder
+          sudo apt-get install -y --fix-missing flatpak flatpak-builder
           sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
           sudo flatpak install -y flathub org.gnome.Platform//47 org.gnome.Sdk//47
 
