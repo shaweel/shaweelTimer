@@ -10,11 +10,13 @@ print(f"{CYAN}Currently in main.py{RESET}")
 print(f"{CYAN}--------------------------------{RESET}")
 
 import gi, status, config, math, pathlib
-
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 from gi.repository import Adw, Gtk, Gdk, GLib
+if sys.platform not in ["win32", "linux"]:
+	status.fatal(f"Unsupported OS: {sys.platform}")
 status.info("Attempting to create and present libadwaita window")
+
 
 running = False
 
@@ -110,9 +112,6 @@ def updateTimerVisuals():
 	timerLabel.set_margin_bottom(fontSize**0.5*2)
 
 def startTimer():
-	ignoreFile = pathlib.Path.home() / ".config" / "shaweelTimer" / ".noAlwaysOnTopWarning"
-	if not ignoreFile.exists(): status.warn("You will have to make the timer always on top yourself. On GNOME you can achieve this by right clicking the timer and checking the \"Always on Top\" option. This is because, there is no cross-platform way to make a window always on top.", True)
-
 	global timerDialog, running, timerLabel
 	running = True
 	
@@ -168,6 +167,12 @@ def startTimer():
 	timerDialog.add_css_class("timer-dialog")
 	timerDialog.set_child(handle)
 	timerDialog.present()
+	if sys.platform == "win32":
+		surface = timerDialog.get_surface()
+		surface.set_keep_above()
+	elif sys.platform == "linux":
+		ignoreFile = pathlib.Path.home() / ".config" / "shaweelTimer" / ".noAlwaysOnTopWarning"
+		if not ignoreFile.exists(): status.warn("You will have to make the timer always on top yourself since you're on Linux. On GNOME you can achieve this by right clicking the timer and checking the \"Always on Top\" option. This is because, there is no cross-platform way to make a window always on top.", True)
 	status.success("Timer started")
 
 def openPreferences(button: Gtk.Button):
