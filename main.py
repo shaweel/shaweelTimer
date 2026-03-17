@@ -1,3 +1,7 @@
+import os, sys
+if sys.platform == "win32":
+	os.system("color")
+
 CYAN = "\033[36m"
 RESET = "\033[0m"
 
@@ -5,7 +9,7 @@ print(f"{CYAN}--------------------------------{RESET}")
 print(f"{CYAN}Currently in main.py{RESET}")
 print(f"{CYAN}--------------------------------{RESET}")
 
-import gi, status, config, math, pathlib, time
+import gi, status, config, math, pathlib
 
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
