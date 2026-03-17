@@ -206,7 +206,7 @@ jobs:
       - name: Create manifest
         run: |
           {
-            echo 'app-id: com.shaweel.Timer'
+            echo 'app-id: me.shaweel.shaweelTimer'
             echo 'runtime: org.gnome.Platform'
             echo "runtime-version: '49'"
             echo 'sdk: org.gnome.Sdk'
@@ -218,7 +218,7 @@ jobs:
             echo '      - install -Dm755 main.py /app/bin/shaweeltimer'
             echo '      - install -Dm755 config.py /app/bin/config.py'
             echo '      - install -Dm755 status.py /app/bin/status.py'
-            echo '      - install -Dm644 shaweelTimer.png /app/share/icons/hicolor/256x256/apps/com.shaweel.Timer.png'
+            echo '      - install -Dm644 shaweelTimer.png /app/share/icons/hicolor/256x256/apps/me.shaweel.shaweelTimer.png'
             echo '      - sed -i "1s|^|#!/usr/bin/env python3\n|" /app/bin/shaweeltimer'
             echo '    sources:'
             echo '      - type: file'
@@ -229,12 +229,12 @@ jobs:
             echo '        path: status.py'
             echo '      - type: file'
             echo '        path: shaweelTimer.png'
-          } > com.shaweel.Timer.yml
+          } > me.shaweel.shaweelTimer.yml
 
       - name: Build Flatpak
         run: |
-          flatpak-builder --force-clean --repo=repo build-dir com.shaweel.Timer.yml
-          flatpak build-bundle repo shaweelTimer.flatpak com.shaweel.Timer
+          flatpak-builder --force-clean --repo=repo build-dir me.shaweel.shaweelTimer.yml
+          flatpak build-bundle repo shaweelTimer.flatpak me.shaweel.shaweelTimer
 
       - uses: actions/upload-artifact@v6
         with:
