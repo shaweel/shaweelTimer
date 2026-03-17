@@ -43,7 +43,7 @@ jobs:
       - name: Upload EXE
         uses: actions/upload-artifact@v6
         with:
-          name: shaweelTimer-windows
+          name: shaweelTimerWindows
           path: dist/shaweelTimer.exe
 
   build-deb:
@@ -84,7 +84,7 @@ jobs:
           dpkg-deb --build deb-pkg shaweelTimer.deb
       - uses: actions/upload-artifact@v6
         with:
-          name: shaweelTimer-debian
+          name: shaweelTimerDebian
           path: shaweelTimer.deb
 
   build-rpm:
@@ -144,5 +144,5 @@ jobs:
       - name: Upload RPM
         uses: actions/upload-artifact@v6
         with:
-          name: shaweelTimer-fedora
+          name: shaweelTimerFedora
           path: ~/rpmbuild/RPMS/noarch/shaweelTimer.rpm
