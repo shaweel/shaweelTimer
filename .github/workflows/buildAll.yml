@@ -88,8 +88,61 @@ jobs:
           echo "VERSION=$(fetchMetadataValue "version")" >> $GITHUB_ENV
           echo "URL=$(fetchMetadataValue "url")" >> $GITHUB_ENV
           echo "MAINTAINER=$(fetchMetadataValue "maintainer")" >> $GITHUB_ENV
+      
           echo "MAINTAINER_EMAIL=$(fetchMetadataValue "maintainerEmail")" >> $GITHUB_ENV
-      - name: "Install rpm build dependencies"
-        run: sudo apt-get install -y rpm
+      - name: Add to path
+        run: |
+          {
+          echo "#!/bin/sh"
+          echo "export GSK_RENDERER=ngl"
+          echo 'exec python3 /usr/lib/shaweelTimer/main.py "$@"'
+          } > $GITHUB_WORKSPACE/shaweeltimer
+          chmod 755 $GITHUB_WORKSPACE/shaweeltimer
+      - name: Create .desktop shortcut
+        run: |
+          {
+          echo "[Desktop Entry]"
+          echo "Name=shaweelTimer"
+          echo "Exec=shaweeltimer"
+          echo "Icon=shaweeltimer"
+          echo "Type=Application"
+          echo "Categories=Utility;"
+          } > $GITHUB_WORKSPACE/shaweeltimer.desktop
+          chmod 755 $GITHUB_WORKSPACE/shaweeltimer.desktop
+      - name: "Create needed directories"
+        run: mkdir -p $GITHUB_WORKSPACE/rpm/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+      - name: Create rpm spec file
+        run: |
+          {
+          echo "Name: $PACKAGE_NAME"
+          echo "URL: $URL"
+          echo "Version: $VERSION"
+          echo "Release: 1%{?dist}"
+          echo "Summary: $DESCRIPTION"
+          echo "Packager: $MAINTAINER <$MAINTAINER_EMAIL>"
+          echo "BuildArch: noarch"
+          echo "License: GPL-3.0-or-later"
+          echo ""
+          echo "%description"
+          echo "$DESCRIPTION"
+          echo ""
+          echo "%install"
+          echo "install -Dm755 main.py %{buildroot}/usr/lib/shaweelTimer/main.py"
+          echo "install -Dm755 status.py %{buildroot}/usr/lib/shaweelTimer/status.py"
+          echo "install -Dm755 config.py %{buildroot}/usr/lib/shaweelTimer/config.py"
+          echo "install -Dm755 $GITHUB_WORKSPACE/shaweeltimer %{buildroot}/usr/bin/shaweeltimer"
+          echo "install -Dm755 $GITHUB_WORKSPACE/shaweeltimer.desktop %{buildroot}/usr/share/applications/shaweeltimer.desktop"
+          echo "install -Dm644 metadata.json %{buildroot}/usr/lib/shaweelTimer/metadata.json"
+          echo "install -Dm644 assets/shaweelTimer.png %{buildroot}/usr/share/icons/hicolor/256x256/apps/shaweeltimer.png"
+          echo ""
+          echo "%files"
+          echo "/usr/lib/shaweelTimer/*"
+          echo "/usr/bin/shaweelTimer"
+          echo "/usr/share/icons/hicolor/256x256/apps/shaweeltimer.png"
+          echo "/usr/share/applications/shaweeltimer.desktop"
+          } > $GITHUB_WORKSPACE/rpm/SPECS/shaweeltimer.spec
+      - name: Build .rpm file
+        run: |
+          rpmbuild -bb --define "_topdir $GITHUB_WORKSPACE/rpm" $GITHUB_WORKSPACE/rpm/SPECS/shaweeltimer.spec
 
 
