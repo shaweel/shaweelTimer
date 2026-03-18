@@ -1,0 +1,17 @@
+name: Build All
+
+on:
+  push:
+    branches: [stable, dev]
+  pull_request:
+    branches: [stable, dev]
+
+jobs:
+  buildDeb:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Fetch version
+        run: |
+            VERSION=$(curl -s https://raw.githubusercontent.com/shaweel/shaweelTimer/refs/heads/stable/metadata.json | grep version | sed "s/.*\"version\": \"\(.*\)\".*/\1/")
+            echo "APP_VERSION=$VERSION" >> $GITHUB_ENV
