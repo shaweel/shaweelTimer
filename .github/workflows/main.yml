@@ -23,6 +23,7 @@ jobs:
             mingw-w64-x86_64-python-pip
             mingw-w64-x86_64-python-gobject
             mingw-w64-x86_64-python-cairo
+            mingw-w64-x86_64-libadwaita
       - name: Cache pip
         uses: actions/cache@v4
         with:
