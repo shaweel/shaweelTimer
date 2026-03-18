@@ -11,9 +11,44 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - name: Fetch version
+      - name: Fetch metadata
         run: |
-            echo "VERSION=$(curl -s https://raw.githubusercontent.com/shaweel/shaweelTimer/refs/heads/stable/metadata.json | grep version | sed 's/.*"version": "\(.*\)".*/\1/')" >> $GITHUB_ENV
-      - name: Check version
+          fetchMetadataValue() {
+            curl -s https://raw.githubusercontent.com/shaweel/shaweelTimer/refs/heads/${{ github.ref_name }}/metadata.json \
+            | grep "$1" \
+            | sed "s/.*\"$1\": \"\(.*\)\".*/\1/"
+          }
+          echo "PACKAGE_NAME=$(fetchMetadataValue "packageName")" >> $GITHUB_ENV
+          echo "DESCRIPTION=$(fetchMetadataValue "description")" >> $GITHUB_ENV
+          echo "VERSION=$(fetchMetadataValue "version")" >> $GITHUB_ENV
+          echo "URL=$(fetchMetadataValue "url")" >> $GITHUB_ENV
+          echo "MAINTAINER=$(fetchMetadataValue "maintainer")" >> $GITHUB_ENV
+          echo "MAINTAINER_EMAIL=$(fetchMetadataValue "maintainerEmail")" >> $GITHUB_ENV
+      - name: Create control file
         run: |
-          echo "Version: ${{env.VERSION}}"
+          mkdir -p $GITHUB_WORKSPACE/pkg/DEBIAN
+          {
+          echo "Package: $PACKAGE_NAME"
+          echo "Description: $DESCRIPTION"
+          echo "Homepage: $URL"
+          echo "Version: $VERSION"
+          echo "Maintainer: $MAINTAINER <$MAINTAINER_EMAIL>"
+          echo "Architecture: all"
+          echo "Depends: python3, python3-gi, gir1.2-gtk-4.0, gir1.2-adw-1"
+          } > $GITHUB_WORKSPACE/pkg/DEBIAN/control
+      - name: Install files
+        run: |
+          install -Dm755 main.py "$GITHUB_WORKSPACE/pkg/usr/lib/shaweelTimer/main.py"
+          install -Dm755 status.py "$GITHUB_WORKSPACE/pkg/usr/lib/shaweelTimer/status.py"
+          install -Dm755 config.py "$GITHUB_WORKSPACE/pkg/usr/lib/shaweelTimer/config.py"
+          install -Dm644 metadata.json "$GITHUB_WORKSPACE/pkg/usr/lib/shaweelTimer/metadata.json"
+          install -Dm644 assets/shaweelTimer.png "$GITHUB_WORKSPACE/pkg/usr/share/icons/hicolor/256x256/apps/shaweeltimer.png"
+      - name: Build .deb file
+        run: |
+          dpkg-deb --build $GITHUB_WORKSPACE/pkg $GITHUB_WORKSPACE/shaweeltimer-$VERSION.deb
+      - name: Upload .deb file as artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: shaweelTimerDebian-${{ github.ref_name }}-${{env.VERSION}}
+          path: ${{ github.workspace }}/shaweeltimer-${{env.VERSION}}.deb
+
