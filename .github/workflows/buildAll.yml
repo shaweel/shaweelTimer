@@ -159,14 +159,13 @@ jobs:
           install: >-
             mingw-w64-x86_64-python
             mingw-w64-x86_64-python-pip
-            mingw-w64-x86_64-python-pyinstaller
             mingw-w64-x86_64-python-gobject
             mingw-w64-x86_64-gtk4
             mingw-w64-x86_64-libadwaita
 
-      #- name: Install PyInstaller
-       # shell: msys2 {0}
-        #run: python3 -m pip install pyinstaller
+      - name: Install PyInstaller
+        shell: msys2 {0}
+        run: pip install pyinstaller
       - name: Build .exe file
         shell: "msys2"
         run: pyinstaller --onefile main.py
