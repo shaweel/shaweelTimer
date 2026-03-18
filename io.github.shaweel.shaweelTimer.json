@@ -19,7 +19,7 @@
 				"install -Dm755 main.py /app/lib/shaweelTimer/main.py",
 				"install -Dm755 status.py /app/lib/shaweelTimer/status.py",
 				"install -Dm755 config.py /app/lib/shaweelTimer/config.py",
-				"install -Dm755 shaweeltimer /app/bin/shaweeltimer",
+				"install -Dm755 shaweeltimer-flatpak /app/bin/shaweeltimer",
 				"install -Dm644 io.github.shaweel.shaweelTimer.desktop /app/share/applications/io.github.shaweel.shaweelTimer.desktop",
 				"install -Dm644 metadata.json /app/lib/shaweelTimer/metadata.json",
 				"install -Dm644 io.github.shaweel.shaweelTimer.metainfo.xml /app/share/metainfo/io.github.shaweel.shaweelTimer.metainfo.xml",

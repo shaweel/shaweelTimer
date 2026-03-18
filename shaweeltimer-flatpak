@@ -1,0 +1,3 @@
+#!/bin/sh
+export GSK_RENDERER=gl
+exec python3 /app/lib/shaweelTimer/main.py
