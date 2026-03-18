@@ -143,7 +143,7 @@ jobs:
           flatpak remote-add --if-not-exists --user flathub https://flathub.org/repo/flathub.flatpakrepo
       - name: Build .flatpak file
         run: |
-          flatpak-builder --user --repo=repo --force-clean --install-deps-from=flathub flatpak_app io.github.shaweel.shaweelTimer.json
+          flatpak-builder --user --repo=repo --force-clean --no-exports --install-deps-from=flathub flatpak_app io.github.shaweel.shaweelTimer.json
           flatpak build-bundle repo shaweelTimer-${{github.ref_name}}-$VERSION.flatpak io.github.shaweel.shaweelTimer
       - name: Upload .flatpak file as artifact
         uses: actions/upload-artifact@v6
