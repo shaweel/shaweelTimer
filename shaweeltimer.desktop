@@ -3,4 +3,4 @@ Name=shaweelTimer
 Exec=shaweeltimer
 Icon=shaweeltimer
 Type=Application
-Categories=Utility;
+Categories=Utility;GTK;Clock

@@ -20,7 +20,7 @@ if sys.platform not in ["win32", "linux"]:
 	status.fatal(f"Unsupported OS: {sys.platform}")
 status.info("Attempting to create and present libadwaita window")
 
-
+wayland = os.environ.get("WAYLAND_DISPLAY") is not None
 running = False
 
 OUTLINE_WIDTH_DIVIDER = 1000
@@ -197,7 +197,7 @@ def startTimer():
 	if sys.platform == "win32":
 		status.info("Waiting for window...")
 		GLib.timeout_add(250, windowsAlwaysOnTop)
-	elif sys.platform == "linux":
+	else:
 		ignoreFile = pathlib.Path.home() / ".config" / "shaweelTimer" / ".noAlwaysOnTopWarning"
 		if not ignoreFile.exists(): status.warn("You will have to make the timer always on top yourself since you're on Linux. On GNOME you can achieve this by right clicking the timer and checking the \"Always on Top\" option. This is because, there is no cross-platform way to make a window always on top.", True)
 	status.success("Timer started")
