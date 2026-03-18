@@ -122,6 +122,7 @@ jobs:
           echo "Packager: $MAINTAINER <$MAINTAINER_EMAIL>"
           echo "BuildArch: noarch"
           echo "License: GPL-3.0-or-later"
+          echo "Requires: python3, python3-gobject, gtk4, libadwaita"
           echo ""
           echo "%description"
           echo "$DESCRIPTION"
