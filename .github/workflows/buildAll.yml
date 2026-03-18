@@ -43,6 +43,27 @@ jobs:
           install -Dm755 config.py "$GITHUB_WORKSPACE/pkg/usr/lib/shaweelTimer/config.py"
           install -Dm644 metadata.json "$GITHUB_WORKSPACE/pkg/usr/lib/shaweelTimer/metadata.json"
           install -Dm644 assets/shaweelTimer.png "$GITHUB_WORKSPACE/pkg/usr/share/icons/hicolor/256x256/apps/shaweeltimer.png"
+      - name: Add to path
+        run: |
+          mkdir -p $GITHUB_WORKSPACE/pkg/usr/bin
+          {
+          echo "#!/bin/sh"
+          echo "export GSK_RENDERER=ngl"
+          echo 'exec python3 /usr/lib/shaweelTimer/main.py "$@"'
+          } > $GITHUB_WORKSPACE/pkg/usr/bin/shaweeltimer
+          chmod 755 $GITHUB_WORKSPACE/pkg/usr/bin/shaweeltimer
+      - name: Create .desktop shortcut
+        run: |
+          mkdir -p $GITHUB_WORKSPACE/pkg/usr/share/applications
+          {
+          echo "[Desktop Entry]"
+          echo "Name=shaweelTimer"
+          echo "Exec=shaweeltimer"
+          echo "Icon=shaweeltimer"
+          echo "Type=Application"
+          echo "Categories=Utility;"
+          } > $GITHUB_WORKSPACE/pkg/usr/share/applications/shaweeltimer.desktop
+          chmod 755 $GITHUB_WORKSPACE/pkg/usr/share/applications/shaweeltimer.desktop
       - name: Build .deb file
         run: |
           dpkg-deb --build $GITHUB_WORKSPACE/pkg $GITHUB_WORKSPACE/shaweeltimer-$VERSION.deb
@@ -51,4 +72,22 @@ jobs:
         with:
           name: shaweelTimerDebian-${{ github.ref_name }}-${{env.VERSION}}
           path: ${{ github.workspace }}/shaweeltimer-${{env.VERSION}}.deb
+  buildRpm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Fetch metadata
+        run: |
+          fetchMetadataValue() {
+            curl -s https://raw.githubusercontent.com/shaweel/shaweelTimer/refs/heads/${{ github.ref_name }}/metadata.json \
+            | grep -o "\"$1\": *\"[^\"]*\"" \
+            | sed 's/.*: *"\(.*\)"/\1/'
+          }
+          echo "PACKAGE_NAME=$(fetchMetadataValue "packageName")" >> $GITHUB_ENV
+          echo "DESCRIPTION=$(fetchMetadataValue "description")" >> $GITHUB_ENV
+          echo "VERSION=$(fetchMetadataValue "version")" >> $GITHUB_ENV
+          echo "URL=$(fetchMetadataValue "url")" >> $GITHUB_ENV
+          echo "MAINTAINER=$(fetchMetadataValue "maintainer")" >> $GITHUB_ENV
+          echo "MAINTAINER_EMAIL=$(fetchMetadataValue "maintainerEmail")" >> $GITHUB_ENV
+
 
