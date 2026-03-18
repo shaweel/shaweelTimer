@@ -27,9 +27,11 @@
 			],
 			"sources": [
 				{
-					"type": "dir",
-					"path": "."
-				}
+				"type": "git",
+				"url": "https://github.com/shaweel/shaweelTimer.git",
+				"tag": "v1.1.0",
+				"commit": "356731ac54e1a5f383ba854fe076ab2223e14118"
+			}
 			]
 		}
 	]
