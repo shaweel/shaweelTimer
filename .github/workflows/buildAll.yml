@@ -10,7 +10,8 @@ jobs:
   buildDeb:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - name: Copy files from repository to workspace"
+        uses: actions/checkout@v6
       - name: Fetch metadata
         run: |
           fetchMetadataValue() {
@@ -57,7 +58,8 @@ jobs:
   buildRpm:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - name: Copy files from repository to workspace"
+        uses: actions/checkout@v6
       - name: Fetch metadata
         run: |
           fetchMetadataValue() {
@@ -71,7 +73,7 @@ jobs:
           echo "URL=$(fetchMetadataValue "url")" >> $GITHUB_ENV
           echo "MAINTAINER=$(fetchMetadataValue "maintainer")" >> $GITHUB_ENV
           echo "MAINTAINER_EMAIL=$(fetchMetadataValue "maintainerEmail")" >> $GITHUB_ENV
-      - name: "Create needed directories"
+      - name: Create needed directories"
         run: mkdir -p $GITHUB_WORKSPACE/rpm/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
       - name: Create rpm spec file
         run: |
@@ -108,7 +110,7 @@ jobs:
         run: |
           rpmbuild -bb --define "_topdir $GITHUB_WORKSPACE/rpm" $GITHUB_WORKSPACE/rpm/SPECS/shaweeltimer.spec
           mv $GITHUB_WORKSPACE/rpm/RPMS/noarch/*.rpm $GITHUB_WORKSPACE/shaweelTimer-${{github.ref_name}}-$VERSION.rpm
-      - name: "Upload .rpm file as artifact"
+      - name: Upload .rpm file as artifact
         uses: actions/upload-artifact@v6
         with:
           name: shaweelTimerFedora-${{github.ref_name}}-${{env.VERSION}}
@@ -116,7 +118,8 @@ jobs:
   buildFlatpak:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - name: Copy files from repository to workspace
+        uses: actions/checkout@v6
       - name: Fetch metadata
         run: |
           fetchMetadataValue() {
@@ -135,9 +138,33 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y flatpak flatpak-builder
           flatpak remote-add --if-not-exists --user flathub https://flathub.org/repo/flathub.flatpakrepo
-      - name: "Build .flatpak file and upload it as artifact"
+      - name: Build .flatpak file and upload it as artifact
         uses: flatpak/flatpak-github-actions/flatpak-builder@v6
         with:
           bundle: shaweelTimer-${{github.ref_name}}-${{env.VERSION}}.flatpak
           manifest-path: io.github.shaweel.shaweelTimer.json
           cache-key: flatpak-builder-${{ github.sha }}
+  buildWindowsPortable:
+    runs-on: windows-latest
+    steps:
+      - name: Copying files from repository to workspace
+        uses: actions/checkout@v6
+      - name: Installing MSYS2 and build dependencies inside it
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          install: >-
+            mingw-w64-x86_64-python
+            mingw-w64-x86_64-python-gobject
+            mingw-w64-x86_64-gtk4
+            mingw-w64-x86_64-libadwaita
+            mingw-w64-x86_64-python-pyinstaller
+      - name: Build .exe file
+        shell: "msys2"
+        run: pyinstaller --onefile main.py
+      - name: Upload .exe file as artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: shaweelTimerWindowsPortable-${{github.ref_name}}-${{env.VERSION}}
+          path: dist/main.exe
+        
