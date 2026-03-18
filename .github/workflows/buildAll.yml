@@ -152,6 +152,19 @@ jobs:
     steps:
       - name: Copy files from repository to workspace
         uses: actions/checkout@v6
+      - name: Fetch metadata
+        run: |
+          fetchMetadataValue() {
+            curl -s https://raw.githubusercontent.com/shaweel/shaweelTimer/refs/heads/${{ github.ref_name }}/metadata.json \
+            | grep -o "\"$1\": *\"[^\"]*\"" \
+            | sed 's/.*: *"\(.*\)"/\1/'
+          }
+          echo "PACKAGE_NAME=$(fetchMetadataValue "packageName")" >> $GITHUB_ENV
+          echo "DESCRIPTION=$(fetchMetadataValue "description")" >> $GITHUB_ENV
+          echo "VERSION=$(fetchMetadataValue "version")" >> $GITHUB_ENV
+          echo "URL=$(fetchMetadataValue "url")" >> $GITHUB_ENV
+          echo "MAINTAINER=$(fetchMetadataValue "maintainer")" >> $GITHUB_ENV
+          echo "MAINTAINER_EMAIL=$(fetchMetadataValue "maintainerEmail")" >> $GITHUB_ENV
       - name: Install MSYS2 and build dependencies inside it
         uses: msys2/setup-msys2@v2
         with:
