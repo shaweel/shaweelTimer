@@ -138,12 +138,15 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y flatpak flatpak-builder
           flatpak remote-add --if-not-exists --user flathub https://flathub.org/repo/flathub.flatpakrepo
-      - name: Build .flatpak file and upload it as artifact
-        uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+      - name: Build .flatpak file
+        run: |
+          flatpak-builder --user --repo=repo --force-clean --install-deps-from=flathub flatpak_app io.github.shaweel.shaweelTimer.json
+          flatpak build-bundle repo shaweelTimer-${{github.ref_name}}-$VERSION.flatpak io.github.shaweel.shaweelTimer
+      - name: Upload .flatpak file as artifact
+        uses: actions/upload-artifact@v6
         with:
-          bundle: shaweelTimer-${{github.ref_name}}-${{env.VERSION}}.flatpak
-          manifest-path: io.github.shaweel.shaweelTimer.json
-          cache-key: flatpak-builder-${{ github.sha }}
+          name: shaweelTimerFlatpak-${{github.ref_name}}-${{env.VERSION}}
+          path: ${{ github.workspace }}/shaweelTimer-${{github.ref_name}}-${{env.VERSION}}.flatpak
   buildWindowsPortable:
     runs-on: windows-latest
     steps:
@@ -155,13 +158,15 @@ jobs:
           msystem: MINGW64
           install: >-
             mingw-w64-x86_64-python
+            mingw-w64-x86_64-python-pip
+            mingw-w64-x86_64-python-pyinstaller
             mingw-w64-x86_64-python-gobject
             mingw-w64-x86_64-gtk4
             mingw-w64-x86_64-libadwaita
 
-      - name: Install PyInstaller
-        shell: msys2 {0}
-        run: python3 -m pip install pyinstaller
+      #- name: Install PyInstaller
+       # shell: msys2 {0}
+        #run: python3 -m pip install pyinstaller
       - name: Build .exe file
         shell: "msys2"
         run: pyinstaller --onefile main.py
