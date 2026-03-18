@@ -15,6 +15,7 @@ jobs:
         run: |
           fetchMetadataValue() {
             curl -s https://raw.githubusercontent.com/shaweel/shaweelTimer/refs/heads/${{ github.ref_name }}/metadata.json \
+            | tr -d '\r' \
             | grep "$1" \
             | sed "s/.*\"$1\": \"\(.*\)\".*/\1/"
           }
