@@ -167,7 +167,7 @@ jobs:
         shell: msys2 {0}
         run: pip install pyinstaller
       - name: Build .exe file
-        shell: "msys2"
+        shell: msys2 {0}
         run: pyinstaller --onefile main.py
       - name: Upload .exe file as artifact
         uses: actions/upload-artifact@v6
