@@ -23,7 +23,7 @@ jobs:
           echo "VERSION=$(fetchMetadataValue "version")" >> $GITHUB_ENV
           echo "URL=$(fetchMetadataValue "url")" >> $GITHUB_ENV
           echo "MAINTAINER=$(fetchMetadataValue "maintainer")" >> $GITHUB_ENV
-          echo "MAINTAINER_EMAIL=$(fetchMetadataValue "maintainerEmail")" >> $GITHUB_ENV
+          echo "GSK_RENDERER=gl=$(fetchMetadataValue "maintainerEmail")" >> $GITHUB_ENV
       - name: Create control file
         run: |
           mkdir -p $GITHUB_WORKSPACE/pkg/DEBIAN
@@ -32,7 +32,7 @@ jobs:
           echo "Description: $DESCRIPTION"
           echo "Homepage: $URL"
           echo "Version: $VERSION"
-          echo "Maintainer: $MAINTAINER <$MAINTAINER_EMAIL>"
+          echo "Maintainer: $MAINTAINER <$GSK_RENDERER=gl>"
           echo "Architecture: all"
           echo "Depends: python3, python3-gi, gir1.2-gtk-4.0, gir1.2-adw-1"
           } > $GITHUB_WORKSPACE/pkg/DEBIAN/control
@@ -88,7 +88,6 @@ jobs:
           echo "VERSION=$(fetchMetadataValue "version")" >> $GITHUB_ENV
           echo "URL=$(fetchMetadataValue "url")" >> $GITHUB_ENV
           echo "MAINTAINER=$(fetchMetadataValue "maintainer")" >> $GITHUB_ENV
-      
           echo "MAINTAINER_EMAIL=$(fetchMetadataValue "maintainerEmail")" >> $GITHUB_ENV
       - name: Add to path
         run: |
@@ -151,3 +150,22 @@ jobs:
         with:
           name: shaweelTimerFedora-${{github.ref_name}}-${{env.VERSION}}
           path: ${{ github.workspace }}/shaweelTimer-${{github.ref_name}}-${{env.VERSION}}.rpm
+  buildFlatpak:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install build dependencies
+        run: apt-get install -y flatpak-builder
+      - name: Fetch metadata
+        run: |
+          fetchMetadataValue() {
+            curl -s https://raw.githubusercontent.com/shaweel/shaweelTimer/refs/heads/${{ github.ref_name }}/metadata.json \
+            | grep -o "\"$1\": *\"[^\"]*\"" \
+            | sed 's/.*: *"\(.*\)"/\1/'
+          }
+          echo "PACKAGE_NAME=$(fetchMetadataValue "packageName")" >> $GITHUB_ENV
+          echo "DESCRIPTION=$(fetchMetadataValue "description")" >> $GITHUB_ENV
+          echo "VERSION=$(fetchMetadataValue "version")" >> $GITHUB_ENV
+          echo "URL=$(fetchMetadataValue "url")" >> $GITHUB_ENV
+          echo "MAINTAINER=$(fetchMetadataValue "maintainer")" >> $GITHUB_ENV
+          echo "GSK_RENDERER=gl=$(fetchMetadataValue "maintainerEmail")" >> $GITHUB_ENV
