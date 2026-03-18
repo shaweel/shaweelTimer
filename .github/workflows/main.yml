@@ -135,7 +135,7 @@ jobs:
             echo 'Version: ${{ steps.version.outputs.VERSION }}'
             echo 'Release: 1%{?dist}'
             echo 'Summary: shaweelTimer'
-            echo 'License: MIT'
+            echo 'License: GPL-3.0-or-later'
             echo 'BuildArch: noarch'
             echo 'Requires: python3, python3-gobject, gtk4, libadwaita, libGLESv2.so.2'
             echo ''
