@@ -130,6 +130,11 @@ jobs:
           echo "URL=$(fetchMetadataValue "url")" >> $GITHUB_ENV
           echo "MAINTAINER=$(fetchMetadataValue "maintainer")" >> $GITHUB_ENV
           echo "MAINTAINER_EMAIL=$(fetchMetadataValue "maintainerEmail")" >> $GITHUB_ENV
+      - name: Install flatpak-builder
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y flatpak flatpak-builder
+          flatpak remote-add --if-not-exists --user flathub https://flathub.org/repo/flathub.flatpakrepo
       - name: "Build .flatpak file and upload it as artifact"
         uses: flatpak/flatpak-github-actions/flatpak-builder@v6
         with:
