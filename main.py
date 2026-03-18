@@ -13,6 +13,9 @@ import gi, status, config, math, pathlib
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 from gi.repository import Adw, Gtk, Gdk, GLib
+settings = Gtk.Settings.get_default()
+settings.set_property("gtk-icon-theme-name", "Adwaita")
+
 if sys.platform not in ["win32", "linux"]:
 	status.fatal(f"Unsupported OS: {sys.platform}")
 status.info("Attempting to create and present libadwaita window")

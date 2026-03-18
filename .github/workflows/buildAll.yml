@@ -143,14 +143,14 @@ jobs:
           flatpak remote-add --if-not-exists --user flathub https://flathub.org/repo/flathub.flatpakrepo
       - name: Build .flatpak file
         run: |
-          flatpak-builder --user --repo=repo --force-clean --no-exports --install-deps-from=flathub flatpak_app io.github.shaweel.shaweelTimer.json
+          flatpak-builder --user --repo=repo --force-clean --install-deps-from=flathub flatpak_app io.github.shaweel.shaweelTimer.json
           flatpak build-bundle repo shaweelTimer-${{github.ref_name}}-$VERSION.flatpak io.github.shaweel.shaweelTimer
       - name: Upload .flatpak file as artifact
         uses: actions/upload-artifact@v6
         with:
           name: shaweelTimerFlatpak-${{github.ref_name}}-${{env.VERSION}}
           path: ${{ github.workspace }}/shaweelTimer-${{github.ref_name}}-${{env.VERSION}}.flatpak
-  buildWindowsPortable:
+  buildWindows:
     runs-on: windows-latest
     steps:
       - name: Copy files from repository to workspace
@@ -185,9 +185,9 @@ jobs:
         run: pip install pyinstaller
       - name: Build .exe file
         shell: msys2 {0}
-        run: pyinstaller --onefile main.py
+        run: pyinstaller --onefile --windowed --icon assets/shaweelTimer.ico --clean --name shaweelTimer-${{github.ref_name}}-$VERSION main.py
       - name: Upload .exe file as artifact
         uses: actions/upload-artifact@v6
         with:
-          name: shaweelTimerWindowsPortable-${{github.ref_name}}-${{env.VERSION}}
-          path: dist/main.exe
+          name: shaweelTimerWindows-${{github.ref_name}}-${{env.VERSION}}
+          path: dist/shaweelTimer-${{github.ref_name}}-${{env.VERSION}}.exe
