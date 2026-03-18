@@ -153,6 +153,7 @@ jobs:
       - name: Copy files from repository to workspace
         uses: actions/checkout@v6
       - name: Fetch metadata
+        shell: sh
         run: |
           fetchMetadataValue() {
             curl -s https://raw.githubusercontent.com/shaweel/shaweelTimer/refs/heads/${{ github.ref_name }}/metadata.json \
