@@ -137,7 +137,7 @@ jobs:
           echo ""
           echo "%files"
           echo "/usr/lib/shaweelTimer/*"
-          echo "/usr/bin/shaweelTimer"
+          echo "/usr/bin/shaweeltimer"
           echo "/usr/share/icons/hicolor/256x256/apps/shaweeltimer.png"
           echo "/usr/share/applications/shaweeltimer.desktop"
           } > $GITHUB_WORKSPACE/rpm/SPECS/shaweeltimer.spec
