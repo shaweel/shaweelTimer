@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.shaweel.shaweelTimer</id>
+  <name>shaweelTimer</name>
+  <summary>A highly customizable timer application written in Python with libadwaita</summary>
+  <description>A longer description</description>
+  <url type="homepage">https://github.com/shaweel/shaweelTimer</url>
+  <metadata_license>MIT</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <developer_name>shaweel</developer_name>
+  <icon>type="stock">io.github.shaweel.shaweelTimer</icon>
+  <releases>
+    <release version="1.1.0" date="2026-03-18"/>
+  </releases>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/shaweel/shaweelTimer/refs/heads/stable/assets/screenshots/all.png</image>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/shaweel/shaweelTimer/refs/heads/stable/assets/screenshots/colorfulConfig.png</image>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/shaweel/shaweelTimer/refs/heads/stable/assets/screenshots/main.png</image>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/shaweel/shaweelTimer/refs/heads/stable/assets/screenshots/preferences.png</image>
+    </screenshot>
+  </screenshots>
+</component>
