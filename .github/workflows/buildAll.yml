@@ -144,7 +144,7 @@ jobs:
       - name: Build .rpm file
         run: |
           rpmbuild -bb --define "_topdir $GITHUB_WORKSPACE/rpm" $GITHUB_WORKSPACE/rpm/SPECS/shaweeltimer.spec
-          mv $GITHUB_WORKSPACE/rpm/RPMS/noarch/*.rpm $GITHUB_WORKSPACE/rpm/RPMS/noarch/shaweelTimer-${{github.ref_name}}-$VERSION.rpm
+          mv $GITHUB_WORKSPACE/rpm/RPMS/noarch/*.rpm $GITHUB_WORKSPACE/shaweelTimer-${{github.ref_name}}-$VERSION.rpm
       - name: "Upload .rpm file as artifact"
         uses: actions/upload-artifact@v6
         with:
