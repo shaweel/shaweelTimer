@@ -131,6 +131,8 @@ def startTimer():
 	hours = int(config.readFromConfig("time.hours"))
 	minutes = int(config.readFromConfig("time.minutes"))
 	seconds = int(config.readFromConfig("time.seconds"))
+	if hours == 0 and minutes == 0 and seconds == 0:
+		status.error("Cannot start timer when it's at 0 seconds.")
 	timerLabel = Gtk.Label(label=f"{hours:02d}:{minutes:02d}:{seconds:02d}")
 	timerLabel.add_css_class("timer")
 
