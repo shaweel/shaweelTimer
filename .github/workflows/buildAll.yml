@@ -10,7 +10,7 @@ jobs:
   buildDeb:
     runs-on: ubuntu-latest
     steps:
-      - name: Copy files from repository to workspace"
+      - name: Copy files from repository to workspace
         uses: actions/checkout@v6
       - name: Fetch metadata
         run: |
@@ -45,6 +45,7 @@ jobs:
           install -Dm755 shaweeltimer "$GITHUB_WORKSPACE/pkg/usr/bin/shaweeltimer"
           install -Dm644 shaweeltimer.desktop "$GITHUB_WORKSPACE/pkg/usr/share/applications/io.github.shaweel.shaweelTimer.desktop"
           install -Dm644 metadata.json "$GITHUB_WORKSPACE/pkg/usr/lib/shaweelTimer/metadata.json"
+          install -Dm644 io.github.shaweel.shaweelTimer.metainfo.xml "$GITHUB_WORKSPACE/pkg/usr/share/metainfo/io.github.shaweel.shaweelTimer.metainfo.xml"
           install -Dm644 assets/shaweelTimer.png "$GITHUB_WORKSPACE/pkg/usr/share/icons/hicolor/256x256/apps/shaweeltimer.png"
           
       - name: Build .deb file
@@ -58,7 +59,7 @@ jobs:
   buildRpm:
     runs-on: ubuntu-latest
     steps:
-      - name: Copy files from repository to workspace"
+      - name: Copy files from repository to workspace
         uses: actions/checkout@v6
       - name: Fetch metadata
         run: |
@@ -73,7 +74,7 @@ jobs:
           echo "URL=$(fetchMetadataValue "url")" >> $GITHUB_ENV
           echo "MAINTAINER=$(fetchMetadataValue "maintainer")" >> $GITHUB_ENV
           echo "MAINTAINER_EMAIL=$(fetchMetadataValue "maintainerEmail")" >> $GITHUB_ENV
-      - name: Create needed directories"
+      - name: Create needed directories
         run: mkdir -p $GITHUB_WORKSPACE/rpm/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
       - name: Create rpm spec file
         run: |
@@ -98,11 +99,13 @@ jobs:
           echo "install -Dm755 $GITHUB_WORKSPACE/shaweeltimer %{buildroot}/usr/bin/shaweeltimer"
           echo "install -Dm755 $GITHUB_WORKSPACE/shaweeltimer.desktop %{buildroot}/usr/share/applications/shaweeltimer.desktop"
           echo "install -Dm644 $GITHUB_WORKSPACE/metadata.json %{buildroot}/usr/lib/shaweelTimer/metadata.json"
+          echo "install -Dm644 $GITHUB_WORKSPACE/io.github.shaweel.shaweelTimer.metainfo.xml %{buildroot}/usr/share/metainfo/io.github.shaweel.shaweelTimer.metainfo.xml"
           echo "install -Dm644 $GITHUB_WORKSPACE/assets/shaweelTimer.png %{buildroot}/usr/share/icons/hicolor/256x256/apps/shaweeltimer.png"
           echo ""
           echo "%files"
           echo "/usr/lib/shaweelTimer/*"
           echo "/usr/bin/shaweeltimer"
+          echo "/usr/share/metainfo/io.github.shaweel.shaweelTimer.metainfo.xml"
           echo "/usr/share/icons/hicolor/256x256/apps/shaweeltimer.png"
           echo "/usr/share/applications/shaweeltimer.desktop"
           } > $GITHUB_WORKSPACE/rpm/SPECS/shaweeltimer.spec
