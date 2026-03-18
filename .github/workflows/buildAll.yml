@@ -66,12 +66,12 @@ jobs:
           chmod 755 $GITHUB_WORKSPACE/pkg/usr/share/applications/shaweeltimer.desktop
       - name: Build .deb file
         run: |
-          dpkg-deb --build $GITHUB_WORKSPACE/pkg $GITHUB_WORKSPACE/shaweeltimer-$VERSION.deb
+          dpkg-deb --build $GITHUB_WORKSPACE/pkg $GITHUB_WORKSPACE/shaweeltimer-${{github.ref_name}}-$VERSION.deb
       - name: Upload .deb file as artifact
         uses: actions/upload-artifact@v6
         with:
-          name: shaweelTimerDebian-${{ github.ref_name }}-${{env.VERSION}}
-          path: ${{ github.workspace }}/shaweeltimer-${{env.VERSION}}.deb
+          name: shaweelTimerDebian-${{github.ref_name}}-${{env.VERSION}}
+          path: ${{ github.workspace }}/shaweeltimer-${{github.ref_name}}-${{env.VERSION}}.deb
   buildRpm:
     runs-on: ubuntu-latest
     steps:
@@ -89,5 +89,7 @@ jobs:
           echo "URL=$(fetchMetadataValue "url")" >> $GITHUB_ENV
           echo "MAINTAINER=$(fetchMetadataValue "maintainer")" >> $GITHUB_ENV
           echo "MAINTAINER_EMAIL=$(fetchMetadataValue "maintainerEmail")" >> $GITHUB_ENV
+      - name: "Install rpm build dependencies"
+        run: sudo apt-get install -y rpm
 
 
