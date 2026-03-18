@@ -57,6 +57,7 @@ def updateTimerVisuals():
 		timerDialog
 	except NameError:
 		return
+	padding = config.readFromConfig("preferences.padding")
 	fontSize = config.readFromConfig("preferences.fontSize")
 	fontWeight = config.readFromConfig("preferences.fontWeight")
 	backgroundOpacity = config.readFromConfig("preferences.backgroundOpacity")/100
@@ -109,13 +110,24 @@ def updateTimerVisuals():
 		
 	Gtk.StyleContext.add_provider_for_display(timerDialog.get_display(), css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
-	timerLabel.set_margin_start(fontSize**0.5*2)
-	timerLabel.set_margin_end(fontSize**0.5*2)
-	timerLabel.set_margin_top(fontSize**0.5*2)
-	timerLabel.set_margin_bottom(fontSize**0.5*2)
+	timerLabel.set_margin_start(fontSize*padding/100)
+	timerLabel.set_margin_end(fontSize*padding/100)
+	timerLabel.set_margin_top(fontSize*padding/100)
+	timerLabel.set_margin_bottom(fontSize*padding/100)
 
 def startTimer():
 	global timerDialog, running, timerLabel
+
+	hours = int(config.readFromConfig("time.hours"))
+	minutes = int(config.readFromConfig("time.minutes"))
+	seconds = int(config.readFromConfig("time.seconds"))
+
+	if hours == 0 and minutes == 0 and seconds == 0:
+		startLabel.set_label("Start")
+		startImage.set_from_icon_name("media-playback-start-symbolic")
+		status.error("Cannot start timer when it's at 0 seconds.")
+		return
+
 	running = True
 	
 	timerDialog = Gtk.Window()
@@ -132,11 +144,6 @@ def startTimer():
 
 	timerDialog.connect("close-request", lambda window: close())
 
-	hours = int(config.readFromConfig("time.hours"))
-	minutes = int(config.readFromConfig("time.minutes"))
-	seconds = int(config.readFromConfig("time.seconds"))
-	if hours == 0 and minutes == 0 and seconds == 0:
-		status.error("Cannot start timer when it's at 0 seconds.")
 	timerLabel = Gtk.Label(label=f"{hours:02d}:{minutes:02d}:{seconds:02d}")
 	timerLabel.add_css_class("timer")
 
@@ -233,6 +240,16 @@ def openPreferences(button: Gtk.Button):
 			return True
 	backgroundOpacity.connect("output", formatButton)
 
+	padding = Gtk.SpinButton()
+	padding.set_range(0, 100)
+	padding.set_increments(1, 5)
+	padding.set_width_chars(5)
+	def formatButton(button):
+			value = int(button.get_value())
+			button.set_text(f"{value}%")
+			return True
+	padding.connect("output", formatButton)
+
 	fontSize = Gtk.SpinButton()
 	fontSize.set_range(8, 120)
 	fontSize.set_increments(1, 4)
@@ -271,6 +288,7 @@ def openPreferences(button: Gtk.Button):
 
 
 	mainBox.append(title)
+	mainBox.append(createOption("Padding", padding))
 	mainBox.append(createOption("Background Opacity", backgroundOpacity))
 	mainBox.append(createOption("Font Size", fontSize))
 	mainBox.append(createOption("Font Weight", fontWeight))
@@ -307,6 +325,7 @@ def openPreferences(button: Gtk.Button):
 	status.success("Presented preferences dialog")
 
 	status.info("Loading preferences...")
+	padding.set_value(		config.readFromConfig("preferences.padding"))
 	backgroundOpacity.set_value(	config.readFromConfig("preferences.backgroundOpacity"))
 	fontSize.set_value(		config.readFromConfig("preferences.fontSize"))
 	fontWeight.set_value(		config.readFromConfig("preferences.fontWeight"))
@@ -319,15 +338,16 @@ def openPreferences(button: Gtk.Button):
 	status.success("Loaded preferences")
 
 	status.info("Registering real-time saving...")
+	padding.connect("value-changed", lambda widget: 		saveConfig(widget, "preferences.padding", Gtk.SpinButton))
 	backgroundOpacity.connect("value-changed", lambda widget: 	saveConfig(widget, "preferences.backgroundOpacity", Gtk.SpinButton))
 	fontSize.connect("value-changed", lambda widget: 		saveConfig(widget, "preferences.fontSize", Gtk.SpinButton))
 	fontWeight.connect("value-changed", lambda widget: 		saveConfig(widget, "preferences.fontWeight", Gtk.SpinButton))
-	textColor.connect("notify::rgba", lambda widget, _: 	saveConfig(widget, "preferences.textColor", Gtk.ColorDialogButton))
-	textOutline.connect("toggled", lambda widget: 		saveConfig(widget, "preferences.textOutline", Gtk.CheckButton))
-	outlineColor.connect("notify::rgba", lambda widget, _:	saveConfig(widget, "preferences.outlineColor", Gtk.ColorDialogButton))
+	textColor.connect("notify::rgba", lambda widget, _: 		saveConfig(widget, "preferences.textColor", Gtk.ColorDialogButton))
+	textOutline.connect("toggled", lambda widget: 			saveConfig(widget, "preferences.textOutline", Gtk.CheckButton))
+	outlineColor.connect("notify::rgba", lambda widget, _:		saveConfig(widget, "preferences.outlineColor", Gtk.ColorDialogButton))
 	outlineWidth.connect("value-changed", lambda widget: 		saveConfig(widget, "preferences.outlineWidth", Gtk.SpinButton))
-	textShadow.connect("toggled", lambda widget: 		saveConfig(widget, "preferences.textShadow", Gtk.CheckButton))
-	shadowColor.connect("notify::rgba", lambda widget, _: 	saveConfig(widget, "preferences.shadowColor", Gtk.ColorDialogButton))
+	textShadow.connect("toggled", lambda widget: 			saveConfig(widget, "preferences.textShadow", Gtk.CheckButton))
+	shadowColor.connect("notify::rgba", lambda widget, _: 		saveConfig(widget, "preferences.shadowColor", Gtk.ColorDialogButton))
 	status.success("Registered real-time saving")
 
 def onActivate(application):

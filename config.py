@@ -12,6 +12,7 @@ defaultConfig = {
 		"seconds": 30
 	},
 	"preferences": {
+		"padding": 50,
 		"backgroundOpacity": 80,
 		"fontSize": 40,
 		"fontWeight": 900,
