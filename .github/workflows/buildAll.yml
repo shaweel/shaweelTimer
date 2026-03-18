@@ -137,7 +137,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y flatpak flatpak-builder
-          flatpak remote-add --if-not-exists --user flathub https://flathub.org/repo/flathub.flatpakrepo
+          sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
       - name: Build .flatpak file and upload it as artifact
         uses: flatpak/flatpak-github-actions/flatpak-builder@v6
         with:
@@ -147,9 +147,9 @@ jobs:
   buildWindowsPortable:
     runs-on: windows-latest
     steps:
-      - name: Copying files from repository to workspace
+      - name: Copy files from repository to workspace
         uses: actions/checkout@v6
-      - name: Installing MSYS2 and build dependencies inside it
+      - name: Install MSYS2 and build dependencies inside it
         uses: msys2/setup-msys2@v2
         with:
           msystem: MINGW64
@@ -158,7 +158,10 @@ jobs:
             mingw-w64-x86_64-python-gobject
             mingw-w64-x86_64-gtk4
             mingw-w64-x86_64-libadwaita
-            mingw-w64-x86_64-python-pyinstaller
+            
+      - name: Install PyInstaller
+        shell: msys2 {0}
+        run: pip install pyinstaller
       - name: Build .exe file
         shell: "msys2"
         run: pyinstaller --onefile main.py
@@ -167,4 +170,3 @@ jobs:
         with:
           name: shaweelTimerWindowsPortable-${{github.ref_name}}-${{env.VERSION}}
           path: dist/main.exe
-        
