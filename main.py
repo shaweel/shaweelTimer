@@ -118,6 +118,7 @@ def startTimer():
 	timerDialog = Gtk.Window()
 	timerDialog.set_resizable(False)
 	timerDialog.set_titlebar(Gtk.Box())
+	timerDialog.set_title("shaweelTimerInstance")
 	def close():
 		startLabel.set_label("Start"),
 		startImage.set_from_icon_name("media-playback-start-symbolic"),
@@ -174,7 +175,7 @@ def startTimer():
 		HWND_TOPMOST = -1
 		SWP_NOMOVE = 0x0002
 		SWP_NOSIZE = 0x0001
-		ctypes.windll.user32.SetWindowPos(ctypes.windll.user32.GetForegroundWindow(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE)
+		ctypes.windll.user32.SetWindowPos(ctypes.windll.user32.FindWindowW(None, "shaweelTimerInstance"), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE)
 	elif sys.platform == "linux":
 		ignoreFile = pathlib.Path.home() / ".config" / "shaweelTimer" / ".noAlwaysOnTopWarning"
 		if not ignoreFile.exists(): status.warn("You will have to make the timer always on top yourself since you're on Linux. On GNOME you can achieve this by right clicking the timer and checking the \"Always on Top\" option. This is because, there is no cross-platform way to make a window always on top.", True)
