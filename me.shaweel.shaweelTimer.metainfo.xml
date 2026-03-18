@@ -4,7 +4,7 @@
   <name>shaweelTimer</name>
   <summary>A highly customizable timer application.</summary>
   <metadata_license>MIT</metadata_license>
-  <project_license>MIT</project_license>
+  <project_license>GPL-3.0-or-later</project_license>
   <description>
     <p>shaweelTimer is a highly customizable timer application made in Python with libadwaita.</p>
   </description>
