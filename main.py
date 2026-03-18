@@ -439,7 +439,26 @@ def onActivate(application):
 	quitButton.set_hexpand(False)
 	quitButton.set_vexpand(False)
 	quitButton.add_css_class("destructive-action")
-	quitButton.connect("clicked", lambda button: application.quit())
+
+	def quitApp():
+		if not running: 
+			application.quit()
+			return
+		dialog = Adw.AlertDialog(heading="Are you sure?", body="The timer is currently running, are you sure you want to quit?")
+		css = Gtk.CssProvider()
+		css.load_from_data(f"dialog {{ background-color: alpha(@window_bg_color, 1); border-radius: 12px; }}")
+		Gtk.StyleContext.add_provider_for_display(dialog.get_display(), css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+		dialog.add_response("yes", "Yes")
+		dialog.add_response("no", "No")
+		dialog.set_response_appearance("yes", Adw.ResponseAppearance.DESTRUCTIVE)
+		dialog.set_response_appearance("no", Adw.ResponseAppearance.DEFAULT)
+		def onResponse(d, response):
+			if response == "no": return
+			application.quit()
+		dialog.connect("response", onResponse)
+		dialog.present(window)
+
+	quitButton.connect("clicked", lambda button: quitApp())
 
 	preferencesButton = Gtk.Button(icon_name="preferences-system-symbolic")
 	preferencesButton.set_size_request(20, 20)
