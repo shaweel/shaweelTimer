@@ -48,7 +48,7 @@ jobs:
           mkdir -p $GITHUB_WORKSPACE/pkg/usr/bin
           {
           echo "#!/bin/sh"
-          echo "export GSK_RENDERER=ngl"
+          echo "export GSK_RENDERER=gl"
           echo 'exec python3 /usr/lib/shaweelTimer/main.py "$@"'
           } > $GITHUB_WORKSPACE/pkg/usr/bin/shaweeltimer
           chmod 755 $GITHUB_WORKSPACE/pkg/usr/bin/shaweeltimer
@@ -94,7 +94,7 @@ jobs:
         run: |
           {
           echo "#!/bin/sh"
-          echo "export GSK_RENDERER=ngl"
+          echo "export GSK_RENDERER=gl"
           echo 'exec python3 /usr/lib/shaweelTimer/main.py "$@"'
           } > $GITHUB_WORKSPACE/shaweeltimer
           chmod 755 $GITHUB_WORKSPACE/shaweeltimer
