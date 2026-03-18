@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2026 shaweelTimer -->
 <component type="desktop-application">
   <id>io.github.shaweel.shaweelTimer</id>
   <name>shaweelTimer</name>
-  <summary>A highly customizable timer application written in Python with libadwaita</summary>
+  <summary>A highly customizable timer application</summary>
   <description> <p>A highly customizable timer application written in Python with libadwaita, allowing customization for padding, background opacity, text color, text weight, text outline and text shadow.</p></description>
   <url type="homepage">https://github.com/shaweel/shaweelTimer</url>
   <launchable type="desktop-id">io.github.shaweel.shaweelTimer.desktop</launchable>
@@ -23,13 +24,13 @@
       <image>https://raw.githubusercontent.com/shaweel/shaweelTimer/refs/heads/stable/assets/screenshots/all.png</image>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/shaweel/shaweelTimer/refs/heads/stable/assets/screenshots/colorfulConfig.png</image>
-    </screenshot>
-    <screenshot>
       <image>https://raw.githubusercontent.com/shaweel/shaweelTimer/refs/heads/stable/assets/screenshots/main.png</image>
     </screenshot>
     <screenshot>
       <image>https://raw.githubusercontent.com/shaweel/shaweelTimer/refs/heads/stable/assets/screenshots/preferences.png</image>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/shaweel/shaweelTimer/refs/heads/stable/assets/screenshots/colorfulConfig.png</image>
     </screenshot>
   </screenshots>
   <categories>
