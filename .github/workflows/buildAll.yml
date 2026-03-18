@@ -15,9 +15,8 @@ jobs:
         run: |
           fetchMetadataValue() {
             curl -s https://raw.githubusercontent.com/shaweel/shaweelTimer/refs/heads/${{ github.ref_name }}/metadata.json \
-            | tr -d '\r' \
-            | grep "$1" \
-            | sed "s/.*\"$1\": \"\(.*\)\".*/\1/"
+            | grep -o "\"$1\": *\"[^\"]*\"" \
+            | sed 's/.*: *"\(.*\)"/\1/'
           }
           echo "PACKAGE_NAME=$(fetchMetadataValue "packageName")" >> $GITHUB_ENV
           echo "DESCRIPTION=$(fetchMetadataValue "description")" >> $GITHUB_ENV
