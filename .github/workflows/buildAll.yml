@@ -137,7 +137,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y flatpak flatpak-builder
-          sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+          flatpak remote-add --if-not-exists --user flathub https://flathub.org/repo/flathub.flatpakrepo
       - name: Build .flatpak file and upload it as artifact
         uses: flatpak/flatpak-github-actions/flatpak-builder@v6
         with:
@@ -158,10 +158,10 @@ jobs:
             mingw-w64-x86_64-python-gobject
             mingw-w64-x86_64-gtk4
             mingw-w64-x86_64-libadwaita
-            
+
       - name: Install PyInstaller
         shell: msys2 {0}
-        run: pip install pyinstaller
+        run: python3 -m pip install pyinstaller
       - name: Build .exe file
         shell: "msys2"
         run: pyinstaller --onefile main.py
