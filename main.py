@@ -175,13 +175,18 @@ def startTimer():
 		HWND_TOPMOST = -1
 		SWP_NOMOVE = 0x0002
 		SWP_NOSIZE = 0x0001
-		ctypes.windll.user32.SetWindowPos(ctypes.windll.user32.FindWindowW(None, "shaweelTimerInstance"), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE)
-		status.success("Made window always on top")
-		return False
+		hwnd = ctypes.windll.user32.FindWindowW(None, "shaweelTimerInstance")
+		if hwnd:
+			status.success("Window found")
+			ctypes.windll.user32.SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE)
+			status.success("Made window always on top")
+			return False
+		status.warn("Didn't find window")
+		return True
 	
 	if sys.platform == "win32":
 		status.info("Waiting for window...")
-		GLib.idle_add(windowsAlwaysOnTop)
+		GLib.timeout_add(250, windowsAlwaysOnTop)
 	elif sys.platform == "linux":
 		ignoreFile = pathlib.Path.home() / ".config" / "shaweelTimer" / ".noAlwaysOnTopWarning"
 		if not ignoreFile.exists(): status.warn("You will have to make the timer always on top yourself since you're on Linux. On GNOME you can achieve this by right clicking the timer and checking the \"Always on Top\" option. This is because, there is no cross-platform way to make a window always on top.", True)
