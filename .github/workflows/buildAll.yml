@@ -65,6 +65,8 @@ jobs:
       - name: Fetch metadata
         run: |
           fetchMetadataValue() {
+            echo Giving GitHub 10s to update
+            sleep 10
             curl -s https://raw.githubusercontent.com/shaweel/shaweelTimer/refs/heads/${{ github.ref_name }}/metadata.json \
             | grep -o "\"$1\": *\"[^\"]*\"" \
             | sed 's/.*: *"\(.*\)"/\1/'
