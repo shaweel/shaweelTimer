@@ -2,7 +2,7 @@
 	"packageName": "shaweeltimer",
 	"description": "A highly customizable timer application written in Python with libadwaita",
 	"url": "https://github.com/shaweel/shaweelTimer",
-	"version": "1.2.0",
+	"version": "1.2.1",
 	"maintainer": "shaweel",
 	"maintainerEmail": "shaweel@proton.me"
 }
