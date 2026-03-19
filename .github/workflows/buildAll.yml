@@ -43,9 +43,8 @@ jobs:
           install -Dm755 status.py "$GITHUB_WORKSPACE/pkg/usr/lib/shaweelTimer/status.py"
           install -Dm755 config.py "$GITHUB_WORKSPACE/pkg/usr/lib/shaweelTimer/config.py"
           install -Dm755 shaweeltimer "$GITHUB_WORKSPACE/pkg/usr/bin/shaweeltimer"
-          install -Dm644 io.github.shaweel.shaweelTimer.desktop "$GITHUB_WORKSPACE/pkg/usr/share/applications/io.github.shaweel.shaweelTimer.desktop"
+          install -Dm644 shaweelTimer.desktop "$GITHUB_WORKSPACE/pkg/usr/share/applications/shaweelTimer.desktop"
           install -Dm644 metadata.json "$GITHUB_WORKSPACE/pkg/usr/lib/shaweelTimer/metadata.json"
-          install -Dm644 io.github.shaweel.shaweelTimer.metainfo.xml "$GITHUB_WORKSPACE/pkg/usr/share/metainfo/io.github.shaweel.shaweelTimer.metainfo.xml"
           install -Dm644 assets/shaweelTimer.png "$GITHUB_WORKSPACE/pkg/usr/share/icons/hicolor/256x256/apps/shaweeltimer.png"
           
       - name: Build .deb file
@@ -97,15 +96,13 @@ jobs:
           echo "install -Dm755 $GITHUB_WORKSPACE/status.py %{buildroot}/usr/lib/shaweelTimer/status.py"
           echo "install -Dm755 $GITHUB_WORKSPACE/config.py %{buildroot}/usr/lib/shaweelTimer/config.py"
           echo "install -Dm755 $GITHUB_WORKSPACE/shaweeltimer %{buildroot}/usr/bin/shaweeltimer"
-          echo "install -Dm755 $GITHUB_WORKSPACE/io.github.shaweel.shaweelTimer.desktop %{buildroot}/usr/share/applications/shaweeltimer.desktop"
+          echo "install -Dm755 $GITHUB_WORKSPACE/shaweelTimer.desktop %{buildroot}/usr/share/applications/shaweeltimer.desktop"
           echo "install -Dm644 $GITHUB_WORKSPACE/metadata.json %{buildroot}/usr/lib/shaweelTimer/metadata.json"
-          echo "install -Dm644 $GITHUB_WORKSPACE/io.github.shaweel.shaweelTimer.metainfo.xml %{buildroot}/usr/share/metainfo/io.github.shaweel.shaweelTimer.metainfo.xml"
           echo "install -Dm644 $GITHUB_WORKSPACE/assets/shaweelTimer.png %{buildroot}/usr/share/icons/hicolor/256x256/apps/shaweeltimer.png"
           echo ""
           echo "%files"
           echo "/usr/lib/shaweelTimer/*"
           echo "/usr/bin/shaweeltimer"
-          echo "/usr/share/metainfo/io.github.shaweel.shaweelTimer.metainfo.xml"
           echo "/usr/share/icons/hicolor/256x256/apps/shaweeltimer.png"
           echo "/usr/share/applications/shaweeltimer.desktop"
           } > $GITHUB_WORKSPACE/rpm/SPECS/shaweeltimer.spec
@@ -118,38 +115,7 @@ jobs:
         with:
           name: shaweelTimerFedora-${{github.ref_name}}-${{env.VERSION}}
           path: ${{ github.workspace }}/shaweelTimer-${{github.ref_name}}-${{env.VERSION}}.rpm
-  buildFlatpak:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Copy files from repository to workspace
-        uses: actions/checkout@v6
-      - name: Fetch metadata
-        run: |
-          fetchMetadataValue() {
-            curl -s https://raw.githubusercontent.com/shaweel/shaweelTimer/refs/heads/${{ github.ref_name }}/metadata.json \
-            | grep -o "\"$1\": *\"[^\"]*\"" \
-            | sed 's/.*: *"\(.*\)"/\1/'
-          }
-          echo "PACKAGE_NAME=$(fetchMetadataValue "packageName")" >> $GITHUB_ENV
-          echo "DESCRIPTION=$(fetchMetadataValue "description")" >> $GITHUB_ENV
-          echo "VERSION=$(fetchMetadataValue "version")" >> $GITHUB_ENV
-          echo "URL=$(fetchMetadataValue "url")" >> $GITHUB_ENV
-          echo "MAINTAINER=$(fetchMetadataValue "maintainer")" >> $GITHUB_ENV
-          echo "MAINTAINER_EMAIL=$(fetchMetadataValue "maintainerEmail")" >> $GITHUB_ENV
-      - name: Install flatpak-builder
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y flatpak flatpak-builder
-          flatpak remote-add --if-not-exists --user flathub https://flathub.org/repo/flathub.flatpakrepo
-      - name: Build .flatpak file
-        run: |
-          flatpak-builder --user --repo=repo --force-clean --install-deps-from=flathub flatpak_app io.github.shaweel.shaweelTimer.json
-          flatpak build-bundle repo shaweelTimer-${{github.ref_name}}-$VERSION.flatpak io.github.shaweel.shaweelTimer
-      - name: Upload .flatpak file as artifact
-        uses: actions/upload-artifact@v6
-        with:
-          name: shaweelTimerFlatpak-${{github.ref_name}}-${{env.VERSION}}
-          path: ${{ github.workspace }}/shaweelTimer-${{github.ref_name}}-${{env.VERSION}}.flatpak
+
   buildWindows:
     runs-on: windows-latest
     steps:
