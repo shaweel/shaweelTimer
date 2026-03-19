@@ -3,7 +3,7 @@ touch versionData.json
 
 fullBranch="$3"
 
-if [ "$fullBranch" = "dev" ]; then
+if [ "$fullBranch" = "dev" ] && [ "$4" ]; then
     	fullBranch="$3 (build: $4)"
 fi
 

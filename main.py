@@ -9,7 +9,7 @@ print(f"{CYAN}--------------------------------{RESET}")
 print(f"{CYAN}Currently in main.py{RESET}")
 print(f"{CYAN}--------------------------------{RESET}")
 
-import gi, status, config, math, pathlib
+import gi, status, config, math, pathlib, json
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 from gi.repository import Adw, Gtk, Gdk, GLib
@@ -237,16 +237,22 @@ def openAbout(button: Gtk.Button):
 		optionBox.append(spacer)
 		optionBox.append(widget)
 		return optionBox
-	
-	version = Gtk.Label(label="6.7")
-	buildType = Gtk.Label(label="test")
-	branch = Gtk.Label(label="dev (build 67)")
+
+	try:
+		versionData = json.loads((pathlib.Path("/usr") / "lib" / "shaweelTimer" / "versionData.json").read_text())
+	except:
+		versionData = {"version": "No data", "type": "No data", "branch": "No data"}
+	version = Gtk.Label(label=versionData["version"])
+	buildType = Gtk.Label(label=versionData["type"])
+	branch = Gtk.Label(label=versionData["branch"])
 
 	mainBox.append(title)
 	mainBox.append(spacer5)
 	mainBox.append(logo)
 	mainBox.append(shaweelTimerTitle)
 	mainBox.append(createInfo("Version:", version))
+	mainBox.append(createInfo("Build Type:", buildType))
+	mainBox.append(createInfo("Branch:", branch))
 
 	buttonBox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=5)
 	buttonBox.set_halign(Gtk.Align.END)
