@@ -149,6 +149,7 @@ jobs:
             mingw-w64-x86_64-python
             mingw-w64-x86_64-python-pip
             mingw-w64-x86_64-python-gobject
+            mingw-w64-x86_64-python-cairo
             mingw-w64-x86_64-gtk4
             mingw-w64-x86_64-libadwaita
             mingw-w64-x86_64-adwaita-icon-theme
@@ -167,9 +168,6 @@ jobs:
         run: |
           MINGW_WIN=$(cygpath -w $MINGW_PREFIX)
           pyinstaller --onefile --windowed --collect-all gi \
-          --add-data "$MINGW_WIN/lib/girepository-1.0;lib/girepository-1.0" \
-          --add-data "$MINGW_WIN/share/glib-2.0/schemas;share/glib-2.0/schemas" \
-          --add-data "$MINGW_WIN/lib/gdk-pixbuf-2.0;lib/gdk-pixbuf-2.0" \
           --add-data "$MINGW_WIN/share/icons;share/icons" \
           --add-data "C:/ProgramData/shaweelTimer;shaweelTimer" \
           --icon assets/shaweelTimer.ico --clean --name shaweelTimer-${{github.ref_name}}-$VERSION main.py
