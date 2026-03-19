@@ -180,21 +180,33 @@ def startTimer():
 	timerDialog.present()
 	def windowsAlwaysOnTop():
 		import ctypes
-		HWND_TOPMOST = -1
+		user32 = ctypes.windll.user32
+		user32.FindWindowW.restype = ctypes.c_void_p
+		user32.SetWindowPos.argtypes = [
+			ctypes.c_void_p, ctypes.c_void_p,
+			ctypes.c_int, ctypes.c_int,
+			ctypes.c_int, ctypes.c_int,
+			ctypes.c_uint
+		]
+		HWND_TOPMOST = ctypes.c_void_p(-1)
 		SWP_NOMOVE = 0x0002
 		SWP_NOSIZE = 0x0001
-		hwnd = ctypes.windll.user32.FindWindowW(None, "shaweelTimerInstance")
-		if hwnd:
-			status.success("Window found")
-			ctypes.windll.user32.SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE)
-			status.success("Made window always on top")
-			return False
-		status.warn("Didn't find window")
-		return True
+		hwnd = user32.FindWindowW(None, "shaweelTimerInstance")
+		if not hwnd:
+			status.warn("Didn't find window")
+			return True
+		status.success("Window found")
+		result = user32.SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE)
+		if not result:
+			err = ctypes.windll.kernel32.GetLastError()
+			status.error(f"Failed to make window always on top: {err}")
+			return True
+		status.success("Made window always on top")
+		return False
 	
 	if sys.platform == "win32":
 		status.info("Waiting for window...")
-		GLib.timeout_add(250, windowsAlwaysOnTop)
+		GLib.timeout_add(0, windowsAlwaysOnTop)
 	else:
 		ignoreFile = pathlib.Path.home() / ".config" / "shaweelTimer" / ".noAlwaysOnTopWarning"
 		if not ignoreFile.exists(): status.warn("You will have to make the timer always on top yourself since you're on Linux. On GNOME you can achieve this by right clicking the timer and checking the \"Always on Top\" option. This is because, there is no cross-platform way to make a window always on top.", True)
@@ -202,6 +214,7 @@ def startTimer():
 
 def openAbout(button: Gtk.Button):
 	dialog = Adw.Dialog()
+	dialog.set_title("About")
 	css = Gtk.CssProvider()
 	css.load_from_data(b".title-5 { font-size: 16px; font-weight: 600; }")
 	Gtk.StyleContext.add_provider_for_display(dialog.get_display(), css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
@@ -220,11 +233,16 @@ def openAbout(button: Gtk.Button):
 	spacer5 = Gtk.Box()
 	spacer5.set_size_request(0, 5)
 
+	logo = Gtk.Image(icon_name="none", pixel_size=128)
+
 	if sys.platform == "linux":
-		logo = Gtk.Image(icon_name="shaweeltimer", pixel_size=128)
+		logo = Gtk.Image(pixel_size=128)
 	elif sys.platform == "win32":
-		logo = Gtk.Image.new_from_file(str(pathlib.Path(sys._MEIPASS) / "shaweelTimer" / "shaweelTimer.png"))
-		logo.set_pixel_size(128)
+		try:
+			logo = Gtk.Image.new_from_file(str(pathlib.Path(sys._MEIPASS) / "shaweelTimer" / "shaweelTimer.png"))
+			logo.set_pixel_size(128)
+		except:
+			status.warn("Couldn't fetch logo on Windows")
 
 	shaweelTimerTitle = Gtk.Label(label="shaweelTimer")
 	shaweelTimerTitle.add_css_class("title-2")
@@ -239,14 +257,16 @@ def openAbout(button: Gtk.Button):
 		optionBox.append(spacer)
 		optionBox.append(widget)
 		return optionBox
-
+	
+	versionData = {"version": "No data", "type": "No data", "branch": "No data"}
 	try:
 		if sys.platform == "linux":
 			versionData = json.loads((pathlib.Path("/usr") / "lib" / "shaweelTimer" / "versionData.json").read_text())
 		elif sys.platform == "win32":
-			versionData = json.loads((pathlib.Path(sys._MEIPASS) / "shaweelTimer" / "versionData.json").read_text())
+			try: versionData = json.loads((pathlib.Path(sys._MEIPASS) / "shaweelTimer" / "versionData.json").read_text())
+			except: status.warn("Couldn't fetch versionData on Windows")
 	except:
-		versionData = {"version": "No data", "type": "No data", "branch": "No data"}
+		pass
 	version = Gtk.Label(label=versionData["version"])
 	buildType = Gtk.Label(label=versionData["type"])
 	branch = Gtk.Label(label=versionData["branch"])
@@ -286,6 +306,7 @@ def openAbout(button: Gtk.Button):
 
 def openPreferences(button: Gtk.Button):
 	dialog = Adw.Dialog()
+	dialog.set_title("Preferences")
 	css = Gtk.CssProvider()
 	css.load_from_data(b".title-5 { font-size: 16px; font-weight: 600; }")
 	Gtk.StyleContext.add_provider_for_display(dialog.get_display(), css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
@@ -435,10 +456,13 @@ def openPreferences(button: Gtk.Button):
 def onActivate(application):
 	global startImage, startLabel
 	if sys.platform == "win32": 
-		display = Gdk.Display.get_default()
-		Gtk.IconTheme.get_for_display(display).add_search_path(str(pathlib.Path(sys._MEIPASS) / "share" / "icons"))
+		try:
+			display = Gdk.Display.get_default()
+			Gtk.IconTheme.get_for_display(display).add_search_path(str(pathlib.Path(sys._MEIPASS) / "share" / "icons"))
+		except: status.warn("Couldn't fetch icons on Windows")
 	window = Adw.ApplicationWindow(application=application)
 	window.set_resizable(False)
+	window.set_title("shaweelTimer")
 	css = Gtk.CssProvider()
 	css.load_from_data(b".colon { font-size: 40px; font-weight: 800; }")
 	Gtk.StyleContext.add_provider_for_display(window.get_display(), css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
