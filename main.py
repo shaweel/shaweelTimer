@@ -202,6 +202,77 @@ def startTimer():
 		if not ignoreFile.exists(): status.warn("You will have to make the timer always on top yourself since you're on Linux. On GNOME you can achieve this by right clicking the timer and checking the \"Always on Top\" option. This is because, there is no cross-platform way to make a window always on top.", True)
 	status.success("Timer started")
 
+def openAbout(button: Gtk.Button):
+	dialog = Adw.Dialog()
+	css = Gtk.CssProvider()
+	css.load_from_data(b".title-5 { font-size: 16px; font-weight: 600; }")
+	Gtk.StyleContext.add_provider_for_display(dialog.get_display(), css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+	dialog.set_size_request(360, 0)
+	mainOverlay = Gtk.Overlay()
+
+	mainBox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
+	mainBox.set_margin_top(10)
+	mainBox.set_margin_bottom(20)
+	mainBox.set_margin_start(20)
+	mainBox.set_margin_end(20)
+
+	title = Gtk.Label(label="About")
+	title.add_css_class("title-2")
+
+	spacer5 = Gtk.Box()
+	spacer5.set_size_request(0, 5)
+
+	logo = Gtk.Image(icon_name="shaweeltimer", pixel_size=128)
+
+	shaweelTimerTitle = Gtk.Label(label="shaweelTimer")
+	shaweelTimerTitle.add_css_class("title-2")
+
+	def createInfo(name, widget):
+		optionBox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+		label = Gtk.Label(label=name)
+		label.add_css_class("title-5")
+		spacer = Gtk.Box()
+		spacer.set_hexpand(True)
+		optionBox.append(label)
+		optionBox.append(spacer)
+		optionBox.append(widget)
+		return optionBox
+	
+	version = Gtk.Label(label="6.7")
+	buildType = Gtk.Label(label="test")
+	branch = Gtk.Label(label="dev (build 67)")
+
+	mainBox.append(title)
+	mainBox.append(spacer5)
+	mainBox.append(logo)
+	mainBox.append(shaweelTimerTitle)
+	mainBox.append(createInfo("Version:", version))
+
+	buttonBox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=5)
+	buttonBox.set_halign(Gtk.Align.END)
+	buttonBox.set_valign(Gtk.Align.START)
+	buttonBox.set_margin_end(5)
+	buttonBox.set_margin_top(5)
+
+	quitButton = Gtk.Button(icon_name="window-close-symbolic")
+	quitButton.set_size_request(20, 20)
+	quitButton.set_hexpand(False)
+	quitButton.set_vexpand(False)
+	quitButton.add_css_class("destructive-action")
+	quitButton.connect("clicked", lambda button: [status.success("Closed preferences dialog"), dialog.close()])
+
+	buttonBox.append(quitButton)
+
+	mainOverlay.set_child(mainBox)
+	mainOverlay.add_overlay(buttonBox)
+
+	handle = Gtk.WindowHandle()
+	handle.set_child(mainOverlay)
+
+	dialog.set_child(handle)
+	dialog.present()
+	status.success("Presented about dialog")
+
 def openPreferences(button: Gtk.Button):
 	dialog = Adw.Dialog()
 	css = Gtk.CssProvider()
@@ -434,6 +505,12 @@ def onActivate(application):
 	buttonBox.set_margin_end(5)
 	buttonBox.set_margin_top(5)
 
+	buttonBoxLeft = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=5)
+	buttonBoxLeft.set_halign(Gtk.Align.START)
+	buttonBoxLeft.set_valign(Gtk.Align.START)
+	buttonBoxLeft.set_margin_start(5)
+	buttonBoxLeft.set_margin_top(5)
+
 	quitButton = Gtk.Button(icon_name="window-close-symbolic")
 	quitButton.set_size_request(20, 20)
 	quitButton.set_hexpand(False)
@@ -466,11 +543,20 @@ def onActivate(application):
 	preferencesButton.set_vexpand(False)
 	preferencesButton.connect("clicked", lambda button: openPreferences(button))
 
+	infoButton = Gtk.Button(icon_name="dialog-information-symbolic")
+	infoButton.set_size_request(20, 20)
+	infoButton.set_hexpand(False)
+	infoButton.set_vexpand(False)
+	infoButton.connect("clicked", lambda button: openAbout(button))
+
 	buttonBox.append(preferencesButton)
 	buttonBox.append(quitButton)
 
+	buttonBoxLeft.append(infoButton)
+
 	mainOverlay.set_child(mainBox)
 	mainOverlay.add_overlay(buttonBox)
+	mainOverlay.add_overlay(buttonBoxLeft)
 
 	handle = Gtk.WindowHandle()
 	handle.set_child(mainOverlay)
