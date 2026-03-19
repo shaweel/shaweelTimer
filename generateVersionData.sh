@@ -1,3 +1,4 @@
+#!/bin/sh
 touch versionData.json
 
 fullBranch="$3"
