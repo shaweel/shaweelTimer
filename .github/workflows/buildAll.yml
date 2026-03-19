@@ -3,6 +3,8 @@ name: Build All
 on:
   push:
     branches: [stable, dev]
+    tags: 
+      - "*"
   pull_request:
     branches: [stable, dev]
 
@@ -45,6 +47,8 @@ jobs:
           install -Dm755 shaweeltimer "$GITHUB_WORKSPACE/pkg/usr/bin/shaweeltimer"
           install -Dm644 shaweelTimer.desktop "$GITHUB_WORKSPACE/pkg/usr/share/applications/shaweelTimer.desktop"
           install -Dm644 metadata.json "$GITHUB_WORKSPACE/pkg/usr/lib/shaweelTimer/metadata.json"
+          ./generateVersionData.sh "Debian (.deb)" $VERSION ${{github.ref_name}} ${{github.run_number}}
+          install -Dm644 versionData.json "$pkgdir/usr/lib/shaweelTimer/versionData.json"
           install -Dm644 assets/shaweelTimer.png "$GITHUB_WORKSPACE/pkg/usr/share/icons/hicolor/256x256/apps/shaweeltimer.png"
           
       - name: Build .deb file
@@ -97,6 +101,8 @@ jobs:
           echo "install -Dm755 $GITHUB_WORKSPACE/config.py %{buildroot}/usr/lib/shaweelTimer/config.py"
           echo "install -Dm755 $GITHUB_WORKSPACE/shaweeltimer %{buildroot}/usr/bin/shaweeltimer"
           echo "install -Dm755 $GITHUB_WORKSPACE/shaweelTimer.desktop %{buildroot}/usr/share/applications/shaweeltimer.desktop"
+          echo "./generateVersionData.sh \"Fedora (.rpm)\" $VERSION ${{github.ref_name}} ${{github.run_number}}"
+          echo "install -Dm644 $GITHUB_WORKSPACE/versionData.json %{buildroot}/usr/lib/shaweelTimer/versionData.json"
           echo "install -Dm644 $GITHUB_WORKSPACE/metadata.json %{buildroot}/usr/lib/shaweelTimer/metadata.json"
           echo "install -Dm644 $GITHUB_WORKSPACE/assets/shaweelTimer.png %{buildroot}/usr/share/icons/hicolor/256x256/apps/shaweeltimer.png"
           echo ""
@@ -145,13 +151,20 @@ jobs:
             mingw-w64-x86_64-python-gobject
             mingw-w64-x86_64-gtk4
             mingw-w64-x86_64-libadwaita
+            mingw-w64-x86_64-adwaita-icon-theme
+      - name: Install files
+        shell: msys2 {0}
+        run: |
+          ./generateVersionData.sh "Windows (.exe)" $VERSION ${{github.ref_name}} ${{github.run_number}}
+          install -Dm644 versionData.json C:/ProgramData/shaweelTimer/versionData.json
+          install -Dm644 assets/shaweelTimer.png C:/msys64/mingw64/share/icons/hicolor/256x256/apps/shaweelTimer.png
 
       - name: Install PyInstaller
         shell: msys2 {0}
         run: pip install pyinstaller
       - name: Build .exe file
         shell: msys2 {0}
-        run: pyinstaller --onefile --windowed --icon assets/shaweelTimer.ico --clean --name shaweelTimer-${{github.ref_name}}-$VERSION main.py
+        run: pyinstaller --onefile --windowed --add-data "C:/msys64/mingw64/share/icons/Adwaita:share/icons" --add-data "C:/ProgramData/shaweelTimer:shaweelTimer" --icon assets/shaweelTimer.ico --clean --name shaweelTimer-${{github.ref_name}}-$VERSION main.py
       - name: Upload .exe file as artifact
         uses: actions/upload-artifact@v6
         with:

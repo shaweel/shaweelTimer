@@ -14,10 +14,11 @@ gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 from gi.repository import Adw, Gtk, Gdk, GLib
 settings = Gtk.Settings.get_default()
+display = Gdk.Display.get_default()
+if sys.platform == "win32": 
+	Gtk.IconTheme.get_for_display(display).add_search_path(str(pathlib.Path(sys._MEIPASS) / "share" / "icons"))
 settings.set_property("gtk-icon-theme-name", "Adwaita")
 
-if sys.platform not in ["win32", "linux"]:
-	status.fatal(f"Unsupported OS: {sys.platform}")
 status.info("Attempting to create and present libadwaita window")
 
 wayland = os.environ.get("WAYLAND_DISPLAY") is not None
@@ -239,7 +240,10 @@ def openAbout(button: Gtk.Button):
 		return optionBox
 
 	try:
-		versionData = json.loads((pathlib.Path("/usr") / "lib" / "shaweelTimer" / "versionData.json").read_text())
+		if sys.platform == "linux":
+			versionData = json.loads((pathlib.Path("/usr") / "lib" / "shaweelTimer" / "versionData.json").read_text())
+		elif sys.platform == "win32":
+			versionData = json.loads((pathlib.Path(sys._MEIPASS) / "shaweelTimer" / "versionData.json").read_text())
 	except:
 		versionData = {"version": "No data", "type": "No data", "branch": "No data"}
 	version = Gtk.Label(label=versionData["version"])
