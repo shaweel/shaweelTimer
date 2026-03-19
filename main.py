@@ -236,7 +236,7 @@ def openAbout(button: Gtk.Button):
 	logo = Gtk.Image(icon_name="none", pixel_size=128)
 
 	if sys.platform == "linux":
-		logo = Gtk.Image(pixel_size=128)
+		logo = Gtk.Image(icon_name="shaweeltimer", pixel_size=128)
 	elif sys.platform == "win32":
 		try:
 			logo = Gtk.Image.new_from_file(str(pathlib.Path(sys._MEIPASS) / "shaweelTimer" / "shaweelTimer.png"))
