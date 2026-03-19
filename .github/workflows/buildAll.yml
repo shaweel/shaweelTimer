@@ -159,7 +159,7 @@ jobs:
           MINGW_WIN=$(cygpath -w $MINGW_PREFIX)
           ./generateVersionData.sh "Windows (.exe)" $VERSION ${{github.ref_name}} ${{github.run_number}}
           install -Dm644 versionData.json C:/ProgramData/shaweelTimer/versionData.json
-          install -Dm644 assets/shaweelTimer.png MINGW_WIN/share/icons/hicolor/256x256/apps/shaweeltimer.png
+          install -Dm644 assets/shaweelTimer.png $MINGW_WIN/share/icons/hicolor/256x256/apps/shaweeltimer.png
 
       - name: Install PyInstaller
         shell: msys2 {0}
