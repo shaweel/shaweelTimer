@@ -164,7 +164,7 @@ jobs:
         run: pip install pyinstaller
       - name: Build .exe file
         shell: msys2 {0}
-        run: pyinstaller --onefile --windowed --add-data "C:/msys64/mingw64/share/icons:share/icons" --add-data "C:/ProgramData/shaweelTimer:shaweelTimer" --icon assets/shaweelTimer.ico --clean --name shaweelTimer-${{github.ref_name}}-$VERSION main.py
+        run: pyinstaller --onefile --windowed --add-data "C:/msys64/mingw64/lib/girepository-1.0:lib/girepository-1.0" --add-data "C:/msys64/mingw64/share/icons:share/icons" --add-data "C:/ProgramData/shaweelTimer:shaweelTimer" --icon assets/shaweelTimer.ico --clean --name shaweelTimer-${{github.ref_name}}-$VERSION main.py
       - name: Upload .exe file as artifact
         uses: actions/upload-artifact@v6
         with:
