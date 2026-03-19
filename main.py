@@ -223,7 +223,8 @@ def openAbout(button: Gtk.Button):
 	if sys.platform == "linux":
 		logo = Gtk.Image(icon_name="shaweeltimer", pixel_size=128)
 	elif sys.platform == "win32":
-		logo = Gtk.Image.new_from_file(str(pathlib.Path(sys._MEIPASS) / "shaweelTimer" / "shaweelTimer.png"), pixel_size=128)
+		logo = Gtk.Image.new_from_file(str(pathlib.Path(sys._MEIPASS) / "shaweelTimer" / "shaweelTimer.png"))
+		logo.set_pixel_size(128)
 
 	shaweelTimerTitle = Gtk.Label(label="shaweelTimer")
 	shaweelTimerTitle.add_css_class("title-2")
