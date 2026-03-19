@@ -159,7 +159,6 @@ jobs:
           MINGW_WIN=$(cygpath -w $MINGW_PREFIX)
           ./generateVersionData.sh "Windows (.exe)" $VERSION ${{github.ref_name}} ${{github.run_number}}
           install -Dm644 versionData.json C:/ProgramData/shaweelTimer/versionData.json
-          install -Dm644 assets/shaweelTimer.png $MINGW_WIN/share/icons/hicolor/256x256/apps/shaweeltimer.png
 
       - name: Install PyInstaller
         shell: msys2 {0}
@@ -172,7 +171,7 @@ jobs:
           --add-data "$MINGW_WIN/lib/girepository-1.0;lib/girepository-1.0" \
           --add-data "$MINGW_WIN/share/glib-2.0/schemas;share/glib-2.0/schemas" \
           --add-data "$MINGW_WIN/lib/gdk-pixbuf-2.0;lib/gdk-pixbuf-2.0" \
-          --add-data "$MINGW_WIN/share/icons;share/icons" \
+          --add-data "assets/shaweelTimer.png;shaweelTimer/shaweelTimer.png" \
           --add-data "C:/ProgramData/shaweelTimer;shaweelTimer" \
           --icon assets/shaweelTimer.ico --clean --name shaweelTimer-${{github.ref_name}}-$VERSION main.py
       - name: Upload .exe file as artifact

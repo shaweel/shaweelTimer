@@ -220,7 +220,10 @@ def openAbout(button: Gtk.Button):
 	spacer5 = Gtk.Box()
 	spacer5.set_size_request(0, 5)
 
-	logo = Gtk.Image(icon_name="shaweeltimer", pixel_size=128)
+	if sys.platform == "linux":
+		logo = Gtk.Image(icon_name="shaweeltimer", pixel_size=128)
+	elif sys.platform == "win32":
+		logo = Gtk.Image.new_from_file(str(pathlib.Path(sys._MEIPASS) / "shaweelTimer" / "shaweelTimer.png"))
 
 	shaweelTimerTitle = Gtk.Label(label="shaweelTimer")
 	shaweelTimerTitle.add_css_class("title-2")
