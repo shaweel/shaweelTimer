@@ -19,6 +19,8 @@ jobs:
             | grep -o "\"$1\": *\"[^\"]*\"" \
             | sed 's/.*: *"\(.*\)"/\1/'
           }
+          echo Giving GitHub 10s to update
+          sleep 10
           echo "PACKAGE_NAME=$(fetchMetadataValue "packageName")" >> $GITHUB_ENV
           echo "DESCRIPTION=$(fetchMetadataValue "description")" >> $GITHUB_ENV
           echo "VERSION=$(fetchMetadataValue "version")" >> $GITHUB_ENV
@@ -65,12 +67,12 @@ jobs:
       - name: Fetch metadata
         run: |
           fetchMetadataValue() {
-            echo Giving GitHub 10s to update
-            sleep 10
             curl -s https://raw.githubusercontent.com/shaweel/shaweelTimer/refs/heads/${{ github.ref_name }}/metadata.json \
             | grep -o "\"$1\": *\"[^\"]*\"" \
             | sed 's/.*: *"\(.*\)"/\1/'
           }
+          echo Giving GitHub 10s to update
+          sleep 10
           echo "PACKAGE_NAME=$(fetchMetadataValue "packageName")" >> $GITHUB_ENV
           echo "DESCRIPTION=$(fetchMetadataValue "description")" >> $GITHUB_ENV
           echo "VERSION=$(fetchMetadataValue "version")" >> $GITHUB_ENV
@@ -135,6 +137,8 @@ jobs:
             | grep -o "\"$1\": *\"[^\"]*\"" \
             | sed 's/.*: *"\(.*\)"/\1/'
           }
+          echo Giving GitHub 10s to update
+          sleep 10
           echo "PACKAGE_NAME=$(fetchMetadataValue "packageName")" >> $GITHUB_ENV
           echo "DESCRIPTION=$(fetchMetadataValue "description")" >> $GITHUB_ENV
           echo "VERSION=$(fetchMetadataValue "version")" >> $GITHUB_ENV
