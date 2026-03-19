@@ -156,7 +156,6 @@ jobs:
       - name: Install files
         shell: msys2 {0}
         run: |
-          MINGW_WIN=$(cygpath -w $MINGW_PREFIX)
           ./generateVersionData.sh "Windows (.exe)" $VERSION ${{github.ref_name}} ${{github.run_number}}
           install -Dm644 versionData.json C:/ProgramData/shaweelTimer/versionData.json
           install -Dm644 assets/shaweelTimer.png C:/msys64/mingw64/share/icons/hicolor/256x256/apps/shaweelTimer.png
@@ -167,6 +166,7 @@ jobs:
       - name: Build .exe file
         shell: msys2 {0}
         run: |
+          MINGW_WIN=$(cygpath -w $MINGW_PREFIX)
           pyinstaller --onefile --windowed --collect-all gi \
           --add-data "$MINGW_WIN/lib/girepository-1.0;lib/girepository-1.0" \
           --add-data "$MINGW_WIN/share/glib-2.0/schemas;share/glib-2.0/schemas" \
