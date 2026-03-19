@@ -102,7 +102,7 @@ jobs:
           echo "install -Dm755 $GITHUB_WORKSPACE/shaweeltimer %{buildroot}/usr/bin/shaweeltimer"
           echo "install -Dm755 $GITHUB_WORKSPACE/shaweelTimer.desktop %{buildroot}/usr/share/applications/shaweeltimer.desktop"
           echo "$GITHUB_WORKSPACE/generateVersionData.sh \"Fedora (.rpm)\" $VERSION ${{github.ref_name}} ${{github.run_number}}"
-          echo "install -Dm644 $GITHUB_WORKSPACE/versionData.json %{buildroot}/usr/lib/shaweelTimer/versionData.json"
+          echo "install -Dm644 ./versionData.json %{buildroot}/usr/lib/shaweelTimer/versionData.json"
           echo "install -Dm644 $GITHUB_WORKSPACE/metadata.json %{buildroot}/usr/lib/shaweelTimer/metadata.json"
           echo "install -Dm644 $GITHUB_WORKSPACE/assets/shaweelTimer.png %{buildroot}/usr/share/icons/hicolor/256x256/apps/shaweeltimer.png"
           echo ""
