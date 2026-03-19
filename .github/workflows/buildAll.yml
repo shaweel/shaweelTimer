@@ -159,7 +159,6 @@ jobs:
           MINGW_WIN=$(cygpath -w $MINGW_PREFIX)
           ./generateVersionData.sh "Windows (.exe)" $VERSION ${{github.ref_name}} ${{github.run_number}}
           install -Dm644 versionData.json C:/ProgramData/shaweelTimer/versionData.json
-
       - name: Install PyInstaller
         shell: msys2 {0}
         run: pip install pyinstaller
@@ -167,7 +166,7 @@ jobs:
         shell: msys2 {0}
         run: |  
           MINGW_WIN=$(cygpath -w $MINGW_PREFIX)
-          pyinstaller --onefile --windowed --collect-all gi \
+          pyinstaller --onefile --collect-all gi \
           --add-data "$MINGW_WIN/lib/girepository-1.0;lib/girepository-1.0" \
           --add-data "$MINGW_WIN/share/glib-2.0/schemas;share/glib-2.0/schemas" \
            --add-data "$MINGW_WIN/share/icons;share/icons" \
