@@ -149,12 +149,14 @@ jobs:
             mingw-w64-x86_64-python
             mingw-w64-x86_64-python-pip
             mingw-w64-x86_64-python-gobject
+            mingw-w64-x86_64-python-cairo
             mingw-w64-x86_64-gtk4
             mingw-w64-x86_64-libadwaita
             mingw-w64-x86_64-adwaita-icon-theme
       - name: Install files
         shell: msys2 {0}
         run: |
+          MINGW_WIN=$(cygpath -w $MINGW_PREFIX)
           ./generateVersionData.sh "Windows (.exe)" $VERSION ${{github.ref_name}} ${{github.run_number}}
           install -Dm644 versionData.json C:/ProgramData/shaweelTimer/versionData.json
           install -Dm644 assets/shaweelTimer.png C:/msys64/mingw64/share/icons/hicolor/256x256/apps/shaweelTimer.png
@@ -164,7 +166,10 @@ jobs:
         run: pip install pyinstaller
       - name: Build .exe file
         shell: msys2 {0}
-        run: pyinstaller --onefile --windowed --collect-all gi --add-data "C:/msys64/mingw64/share/icons:share/icons" --add-data "C:/ProgramData/shaweelTimer:shaweelTimer" --icon assets/shaweelTimer.ico --clean --name shaweelTimer-${{github.ref_name}}-$VERSION main.py
+        run: pyinstaller --onefile --windowed --collect-all gi \
+         --add-data "C:/msys64/mingw64/share/icons:share/icons" \
+         --add-data "C:/ProgramData/shaweelTimer:shaweelTimer" \
+         --icon assets/shaweelTimer.ico --clean --name shaweelTimer-${{github.ref_name}}-$VERSION main.py
       - name: Upload .exe file as artifact
         uses: actions/upload-artifact@v6
         with:
