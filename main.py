@@ -277,7 +277,7 @@ def openAbout(button: Gtk.Button):
 	mainBox.append(shaweelTimerTitle)
 	mainBox.append(createInfo("Version:", version))
 	mainBox.append(createInfo("Build Type:", buildType))
-	mainBox.append(createInfo("Branch/tag:", branch))
+	mainBox.append(createInfo("Branch:", branch))
 
 	buttonBox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=5)
 	buttonBox.set_halign(Gtk.Align.END)
