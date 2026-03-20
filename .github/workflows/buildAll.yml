@@ -170,7 +170,7 @@ jobs:
         shell: msys2 {0}
         run: |  
           MINGW_WIN=$(cygpath -w $MINGW_PREFIX)
-          pyinstaller --onefile --collect-all gi \
+          pyinstaller --onefile --windowed --collect-all gi \
           --add-data "$MINGW_WIN/lib/girepository-1.0;lib/girepository-1.0" \
           --add-data "$MINGW_WIN/share/glib-2.0/schemas;share/glib-2.0/schemas" \
            --add-data "$MINGW_WIN/share/icons;share/icons" \
