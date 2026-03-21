@@ -14,19 +14,22 @@ jobs:
         uses: actions/checkout@v6
       - name: Fetch metadata
         run: |
-          fetchMetadataValue() {
-            curl -s https://raw.githubusercontent.com/shaweel/shaweelTimer/refs/heads/${{ github.ref_name }}/metadata.json \
-            | grep -o "\"$1\": *\"[^\"]*\"" \
-            | sed 's/.*: *"\(.*\)"/\1/'
-          }
-          echo Giving GitHub 10s to update
-          sleep 10
-          echo "PACKAGE_NAME=$(fetchMetadataValue "packageName")" >> $GITHUB_ENV
-          echo "DESCRIPTION=$(fetchMetadataValue "description")" >> $GITHUB_ENV
-          echo "VERSION=$(fetchMetadataValue "version")" >> $GITHUB_ENV
-          echo "URL=$(fetchMetadataValue "url")" >> $GITHUB_ENV
-          echo "MAINTAINER=$(fetchMetadataValue "maintainer")" >> $GITHUB_ENV
-          echo "MAINTAINER_EMAIL=$(fetchMetadataValue "maintainerEmail")" >> $GITHUB_ENV
+          METADATA=metadata.json
+          PACKAGE_NAME=$(jq -r '.packageName' "$METADATA")
+          DESCRIPTION=$(jq -r '.description'  "$METADATA")
+          VERSION=$(jq -r '.version'          "$METADATA")
+          URL=$(jq -r '.url'                  "$METADATA")
+          MAINTAINER=$(jq -r '.maintainer'    "$METADATA")
+          MAINTAINER_EMAIL=$(jq -r '.maintainerEmail' "$METADATA")
+
+          {
+            echo "PACKAGE_NAME=$PACKAGE_NAME"
+            echo "DESCRIPTION=$DESCRIPTION"
+            echo "VERSION=$VERSION"
+            echo "URL=$URL"
+            echo "MAINTAINER=$MAINTAINER"
+            echo "MAINTAINER_EMAIL=$MAINTAINER_EMAIL"
+          } >> "$GITHUB_ENV"
       - name: Create control file
         run: |
           mkdir -p $GITHUB_WORKSPACE/pkg/DEBIAN
@@ -66,19 +69,22 @@ jobs:
         uses: actions/checkout@v6
       - name: Fetch metadata
         run: |
-          fetchMetadataValue() {
-            curl -s https://raw.githubusercontent.com/shaweel/shaweelTimer/refs/heads/${{ github.ref_name }}/metadata.json \
-            | grep -o "\"$1\": *\"[^\"]*\"" \
-            | sed 's/.*: *"\(.*\)"/\1/'
-          }
-          echo Giving GitHub 10s to update
-          sleep 10
-          echo "PACKAGE_NAME=$(fetchMetadataValue "packageName")" >> $GITHUB_ENV
-          echo "DESCRIPTION=$(fetchMetadataValue "description")" >> $GITHUB_ENV
-          echo "VERSION=$(fetchMetadataValue "version")" >> $GITHUB_ENV
-          echo "URL=$(fetchMetadataValue "url")" >> $GITHUB_ENV
-          echo "MAINTAINER=$(fetchMetadataValue "maintainer")" >> $GITHUB_ENV
-          echo "MAINTAINER_EMAIL=$(fetchMetadataValue "maintainerEmail")" >> $GITHUB_ENV
+          METADATA=metadata.json
+          PACKAGE_NAME=$(jq -r '.packageName' "$METADATA")
+          DESCRIPTION=$(jq -r '.description'  "$METADATA")
+          VERSION=$(jq -r '.version'          "$METADATA")
+          URL=$(jq -r '.url'                  "$METADATA")
+          MAINTAINER=$(jq -r '.maintainer'    "$METADATA")
+          MAINTAINER_EMAIL=$(jq -r '.maintainerEmail' "$METADATA")
+
+          {
+            echo "PACKAGE_NAME=$PACKAGE_NAME"
+            echo "DESCRIPTION=$DESCRIPTION"
+            echo "VERSION=$VERSION"
+            echo "URL=$URL"
+            echo "MAINTAINER=$MAINTAINER"
+            echo "MAINTAINER_EMAIL=$MAINTAINER_EMAIL"
+          } >> "$GITHUB_ENV"
       - name: Create needed directories
         run: mkdir -p $GITHUB_WORKSPACE/rpm/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
       - name: Create rpm spec file
@@ -130,21 +136,24 @@ jobs:
       - name: Copy files from repository to workspace
         uses: actions/checkout@v6
       - name: Fetch metadata
-        shell: sh
+        shell: bash
         run: |
-          fetchMetadataValue() {
-            curl -s https://raw.githubusercontent.com/shaweel/shaweelTimer/refs/heads/${{ github.ref_name }}/metadata.json \
-            | grep -o "\"$1\": *\"[^\"]*\"" \
-            | sed 's/.*: *"\(.*\)"/\1/'
-          }
-          echo Giving GitHub 10s to update
-          sleep 10
-          echo "PACKAGE_NAME=$(fetchMetadataValue "packageName")" >> $GITHUB_ENV
-          echo "DESCRIPTION=$(fetchMetadataValue "description")" >> $GITHUB_ENV
-          echo "VERSION=$(fetchMetadataValue "version")" >> $GITHUB_ENV
-          echo "URL=$(fetchMetadataValue "url")" >> $GITHUB_ENV
-          echo "MAINTAINER=$(fetchMetadataValue "maintainer")" >> $GITHUB_ENV
-          echo "MAINTAINER_EMAIL=$(fetchMetadataValue "maintainerEmail")" >> $GITHUB_ENV
+          METADATA=metadata.json
+          PACKAGE_NAME=$(jq -r '.packageName' "$METADATA")
+          DESCRIPTION=$(jq -r '.description'  "$METADATA")
+          VERSION=$(jq -r '.version'          "$METADATA")
+          URL=$(jq -r '.url'                  "$METADATA")
+          MAINTAINER=$(jq -r '.maintainer'    "$METADATA")
+          MAINTAINER_EMAIL=$(jq -r '.maintainerEmail' "$METADATA")
+
+          {
+            echo "PACKAGE_NAME=$PACKAGE_NAME"
+            echo "DESCRIPTION=$DESCRIPTION"
+            echo "VERSION=$VERSION"
+            echo "URL=$URL"
+            echo "MAINTAINER=$MAINTAINER"
+            echo "MAINTAINER_EMAIL=$MAINTAINER_EMAIL"
+          } >> "$GITHUB_ENV"
       - name: Install MSYS2 and build dependencies inside it
         uses: msys2/setup-msys2@v2
         with:
