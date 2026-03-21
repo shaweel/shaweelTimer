@@ -26,6 +26,8 @@ OUTLINE_WIDTH_DIVIDER = 1000
 def saveConfig(widget, path, widgetType):
 	if widgetType == Gtk.SpinButton:
 		value = widget.get_value()
+	elif widgetType == Gtk.DropDown:
+		value = widget.get_selected()
 	elif widgetType == Gtk.CheckButton:
 		value = widget.get_active()
 	elif widgetType == Gtk.ColorDialogButton:
@@ -116,14 +118,19 @@ def updateTimerVisuals():
 def startTimer():
 	global timerDialog, running, timerLabel
 
-	hours = int(config.readFromConfig("time.hours"))
-	minutes = int(config.readFromConfig("time.minutes"))
-	seconds = int(config.readFromConfig("time.seconds"))
+	mode = config.readFromConfig("mode")
 
-	if hours == 0 and minutes == 0 and seconds == 0:
+	if mode == 0:
+		hours = int(config.readFromConfig("time.hours"))
+		minutes = int(config.readFromConfig("time.minutes"))
+		seconds = int(config.readFromConfig("time.seconds"))
+	elif mode == 1:
+		hours, minutes, seconds = 0, 0, 0
+
+	if hours == 0 and minutes == 0 and seconds == 0 and mode == 0:
 		startLabel.set_label("Start")
 		startImage.set_from_icon_name("media-playback-start-symbolic")
-		status.error("Cannot start timer when it's at 0 seconds.")
+		status.error("Cannot start timer with countdown mode when it's at 0 seconds.")
 		return
 
 	running = True
@@ -151,7 +158,7 @@ def startTimer():
 		if not running: 
 			return False
 		elif seconds == 1 and minutes == 0 and hours == 0:
-			seconds -= 1
+			seconds += 1
 			stopTimer(True)
 			status.showDialog("done", "The timer has finished.")
 			return False
@@ -168,7 +175,28 @@ def startTimer():
 		timerLabel.set_label(f"{hours:02d}:{minutes:02d}:{seconds:02d}")
 		return True
 	
-	GLib.timeout_add(1000, lambda: countDown())
+	def countUp():
+		nonlocal hours, minutes, seconds
+		
+		if not running: 
+			return False
+		elif seconds < 60:
+			seconds += 1
+		elif minutes < 60:
+			seconds = 59
+			minutes += 1
+		elif minutes <= 60:
+			seconds = 59
+			minutes = 59
+			hours += 1
+		
+		timerLabel.set_label(f"{hours:02d}:{minutes:02d}:{seconds:02d}")
+		return True
+
+	if mode == 0:
+		GLib.timeout_add(1000, lambda: countDown())
+	elif mode == 1:
+		GLib.timeout_add(1000, lambda: countUp())
 
 	handle = Gtk.WindowHandle()
 	handle.set_child(timerLabel)
@@ -620,13 +648,15 @@ def onActivate(application):
 
 	window.present()
 	status.success("Presented libadwaita window")
-	status.info("Loading last time...")
+	status.info("Loading last config...")
+	mode.set_selected(		config.readFromConfig("mode"))
 	hoursSpinButton.set_value(	config.readFromConfig("time.hours"))
 	minutesSpinButton.set_value(	config.readFromConfig("time.minutes"))
 	secondsSpinButton.set_value(	config.readFromConfig("time.seconds"))
 	status.success("Loaded last time")
 	status.info("Registering real-time saving...")
-	hoursSpinButton.connect("value-changed", lambda widget:	saveConfig(widget, "time.hours", Gtk.SpinButton))
+	mode.connect("notify::selected", lambda widget, _:		saveConfig(widget, "mode", Gtk.DropDown))
+	hoursSpinButton.connect("value-changed", lambda widget:		saveConfig(widget, "time.hours", Gtk.SpinButton))
 	minutesSpinButton.connect("value-changed", lambda widget:	saveConfig(widget, "time.minutes", Gtk.SpinButton))
 	secondsSpinButton.connect("value-changed", lambda widget:	saveConfig(widget, "time.seconds", Gtk.SpinButton))
 	status.success("Registered real-time saving")

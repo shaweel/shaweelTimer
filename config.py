@@ -6,6 +6,7 @@ configFolder = pathlib.Path.home() / ".config" / "shaweelTimer"
 configFolder.mkdir(parents=True, exist_ok=True)
 
 defaultConfig = {
+	"mode": 0,
 	"time": {
 		"hours": 0,
 		"minutes": 0,
