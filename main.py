@@ -180,14 +180,14 @@ def startTimer():
 		
 		if not running: 
 			return False
-		elif seconds < 60:
+		elif seconds < 59:
 			seconds += 1
-		elif minutes < 60:
-			seconds = 59
+		elif minutes < 59:
+			seconds = 0
 			minutes += 1
-		elif minutes <= 60:
-			seconds = 59
-			minutes = 59
+		elif minutes <= 59:
+			seconds = 0
+			minutes = 0
 			hours += 1
 		
 		timerLabel.set_label(f"{hours:02d}:{minutes:02d}:{seconds:02d}")
