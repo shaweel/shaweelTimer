@@ -12,7 +12,7 @@ print(f"{CYAN}--------------------------------{RESET}")
 import gi, status, config, math, pathlib, json
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
-from gi.repository import Adw, Gtk, Gdk, GLib
+from gi.repository import Adw, Gtk, Gdk, GLib, Gio
 settings = Gtk.Settings.get_default()
 settings.set_property("gtk-icon-theme-name", "Adwaita")
 
@@ -469,12 +469,25 @@ def onActivate(application):
 
 	mainOverlay = Gtk.Overlay()
 
-	mainBox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
+	mainBox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
 	mainBox.set_margin_top(10)
 	mainBox.set_margin_bottom(10)
 
 	title = Gtk.Label(label="shaweelTimer")
 	title.add_css_class("title-2")
+
+	mode = Gtk.DropDown()
+	mode.set_hexpand(False)
+	mode.set_halign(Gtk.Align.CENTER)
+	mode.set_size_request(160, 0)
+	mode.set_model(Gtk.StringList.new(["Countdown", "Stopwatch"]))
+	def modeChanged(mode: Gtk.DropDown, __):
+		if mode.get_selected() == 0:
+			timeBox.set_sensitive(True)
+		elif mode.get_selected() == 1:
+			timeBox.set_sensitive(False)
+
+	mode.connect("notify::selected", modeChanged)
 
 	timeBox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=5)
 	timeBox.set_halign(Gtk.Align.CENTER)
@@ -534,6 +547,7 @@ def onActivate(application):
 	startButton.connect("clicked", lambda _: onStartButtonClicked())
 		
 	mainBox.append(title)
+	mainBox.append(mode)
 	mainBox.append(timeBox)
 	mainBox.append(startButton)
 
