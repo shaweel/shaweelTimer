@@ -542,6 +542,9 @@ def onActivate(application):
 		else:
 			startLabel.set_label("Stop")
 			startImage.set_from_icon_name("media-playback-stop-symbolic")
+			config.writeToConfig("time.hours", hoursSpinButton.get_value())
+			config.writeToConfig("time.minutes", minutesSpinButton.get_value())
+			config.writeToConfig("time.seconds", secondsSpinButton.get_value())
 			startTimer()
 
 	startButton.connect("clicked", lambda _: onStartButtonClicked())
