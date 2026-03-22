@@ -43,6 +43,18 @@ def stopTimer(close):
 	running = False
 	timerDialog.set_visible(not close)
 
+def resumeTimer():
+	global timerDialog, running, resumeButton
+	resumeButton.set_visible(False)
+	startLabel.set_label("Stop")
+	startImage.set_from_icon_name("media-playback-stop-symbolic")
+	mode = config.readFromConfig("mode")
+	if mode == 0:
+		GLib.timeout_add(1000, lambda: countDown(currentId))
+	elif mode == 1:
+		GLib.timeout_add(1000, lambda: countUp(currentId))
+	running = True
+
 def createOutlineShadow(radius, color, steps):
 	shadows = []
 	for i in range(steps):
@@ -118,15 +130,38 @@ def updateTimerVisuals():
 timerId = 0
 
 def startTimer():
-	global timerDialog, running, timerLabel, timerId
+	global timerDialog, running, timerLabel, timerId, mainWindow, currentId, countDown, countUp
 	timerId+=1
 	mode = config.readFromConfig("mode")
 
-	if mode == 0:
-		hours = int(config.readFromConfig("time.hours"))
-		minutes = int(config.readFromConfig("time.minutes"))
-		seconds = int(config.readFromConfig("time.seconds"))
-	elif mode == 1:
+	hours = int(config.readFromConfig("time.hours"))
+	minutes = int(config.readFromConfig("time.minutes"))
+	seconds = int(config.readFromConfig("time.seconds"))
+
+	zeroAll = True
+	if (hours != 0 or minutes != 0 or seconds != 0) and mode == 1:
+		dialog = Adw.AlertDialog(heading="Stopwatch mode", body="The timer is in stopwatch mode without being at 0s. Do you want to start the stopwatch at the set time?")
+		css = Gtk.CssProvider()
+		css.load_from_data(f"dialog {{ background-color: alpha(@window_bg_color, 1); border-radius: 12px; }}")
+		Gtk.StyleContext.add_provider_for_display(dialog.get_display(), css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+		dialog.add_response("yes", "Yes")
+		dialog.add_response("no", "No")
+		dialog.set_response_appearance("yes", Adw.ResponseAppearance.DEFAULT)
+		dialog.set_response_appearance("no", Adw.ResponseAppearance.DEFAULT)
+		def onResponse(d, response):
+			nonlocal zeroAll
+			if response == "no": 
+				zeroAll = True
+			elif response == "yes":
+				zeroAll = False
+		dialog.connect("response", onResponse)
+		loop = GLib.MainLoop()
+		dialog.connect("response", lambda d, r: loop.quit())
+		dialog.present(mainWindow)
+		loop.run()
+
+	if mode == 1 and zeroAll:
+		print("asd")
 		hours, minutes, seconds = 0, 0, 0
 
 	if hours == 0 and minutes == 0 and seconds == 0 and mode == 0:
@@ -494,18 +529,18 @@ def openPreferences(button: Gtk.Button):
 	status.success("Registered real-time saving")
 
 def onActivate(application):
-	global startImage, startLabel, waitingToClose
+	global startImage, startLabel, waitingToClose, mainWindow, resumeButton
 	if sys.platform == "win32": 
 		try:
 			display = Gdk.Display.get_default()
 			Gtk.IconTheme.get_for_display(display).add_search_path(str(pathlib.Path(sys._MEIPASS) / "share" / "icons"))
 		except: status.warn("Couldn't fetch icons on Windows")
-	window = Adw.ApplicationWindow(application=application)
-	window.set_resizable(False)
-	window.set_title("shaweelTimer")
+	mainWindow = Adw.ApplicationWindow(application=application)
+	mainWindow.set_resizable(False)
+	mainWindow.set_title("shaweelTimer")
 	css = Gtk.CssProvider()
 	css.load_from_data(b".colon { font-size: 40px; font-weight: 800; }")
-	Gtk.StyleContext.add_provider_for_display(window.get_display(), css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+	Gtk.StyleContext.add_provider_for_display(mainWindow.get_display(), css, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
 	mainOverlay = Gtk.Overlay()
 
@@ -521,13 +556,6 @@ def onActivate(application):
 	mode.set_halign(Gtk.Align.CENTER)
 	mode.set_size_request(160, 0)
 	mode.set_model(Gtk.StringList.new(["Countdown", "Stopwatch"]))
-	def modeChanged(mode: Gtk.DropDown, __):
-		if mode.get_selected() == 0:
-			timeBox.set_sensitive(True)
-		elif mode.get_selected() == 1:
-			timeBox.set_sensitive(False)
-
-	mode.connect("notify::selected", modeChanged)
 
 	timeBox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=5)
 	timeBox.set_halign(Gtk.Align.CENTER)
@@ -573,23 +601,48 @@ def onActivate(application):
 	startButton.set_size_request(160, 0)
 	startButton.set_halign(Gtk.Align.CENTER)
 	startButton.set_child(startButtonBox)
+
+	resumeButton = Gtk.Button()
+	resumeButtonBox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=5)
+	resumeButtonBox.set_halign(Gtk.Align.CENTER)
+	resumeLabel = Gtk.Label(label="Resume")
+	resumeImage = Gtk.Image(icon_name="media-playback-start-symbolic")
+	resumeButtonBox.append(resumeImage)
+	resumeButtonBox.append(resumeLabel)
+	resumeButton.set_hexpand(False)
+	resumeButton.set_size_request(160, 0)
+	resumeButton.set_halign(Gtk.Align.CENTER)
+	resumeButton.set_child(resumeButtonBox)
+	resumeButton.set_visible(False)
+
+	resumeButton.connect("clicked", lambda _: resumeTimer())
+
+	allButtonBox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+	allButtonBox.set_halign(Gtk.Align.CENTER)
+	allButtonBox.append(startButton)
+	allButtonBox.append(resumeButton)
+
 	def onStartButtonClicked():
 		global running, waitingToClose, timerDialog
 		if running and mode.get_selected() == 0:
+			resumeButton.set_visible(False)
 			startLabel.set_label("Start")
 			startImage.set_from_icon_name("media-playback-start-symbolic")
 			stopTimer(True)
 		elif running and mode.get_selected() == 1:
+			resumeButton.set_visible(True)
 			startLabel.set_label("Close")
 			startImage.set_from_icon_name("window-close-symbolic")
 			waitingToClose = True
 			stopTimer(False)
 		elif not running and waitingToClose:
+			resumeButton.set_visible(False)
 			startLabel.set_label("Start")
 			startImage.set_from_icon_name("media-playback-start-symbolic")
 			waitingToClose = False
 			timerDialog.set_visible(False)
 		elif not running and not waitingToClose:
+			resumeButton.set_visible(False)
 			startLabel.set_label("Stop")
 			startImage.set_from_icon_name("media-playback-stop-symbolic")
 			config.writeToConfig("time.hours", hoursSpinButton.get_value())
@@ -604,7 +657,7 @@ def onActivate(application):
 	mainBox.append(title)
 	mainBox.append(mode)
 	mainBox.append(timeBox)
-	mainBox.append(startButton)
+	mainBox.append(allButtonBox)
 
 	buttonBox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=5)
 	buttonBox.set_halign(Gtk.Align.END)
@@ -640,7 +693,7 @@ def onActivate(application):
 			if response == "no": return
 			application.quit()
 		dialog.connect("response", onResponse)
-		dialog.present(window)
+		dialog.present(mainWindow)
 
 	quitButton.connect("clicked", lambda button: quitApp())
 
@@ -668,9 +721,9 @@ def onActivate(application):
 	handle = Gtk.WindowHandle()
 	handle.set_child(mainOverlay)
 
-	window.set_content(handle)
+	mainWindow.set_content(handle)
 
-	window.present()
+	mainWindow.present()
 	status.success("Presented libadwaita window")
 	status.info("Loading last config...")
 	mode.set_selected(		config.readFromConfig("mode"))
