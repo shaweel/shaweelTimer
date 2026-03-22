@@ -115,9 +115,11 @@ def updateTimerVisuals():
 	timerLabel.set_margin_top(fontSize*padding/100)
 	timerLabel.set_margin_bottom(fontSize*padding/100)
 
-def startTimer():
-	global timerDialog, running, timerLabel
+timerId = 0
 
+def startTimer():
+	global timerDialog, running, timerLabel, timerId
+	timerId+=1
 	mode = config.readFromConfig("mode")
 
 	if mode == 0:
@@ -152,13 +154,14 @@ def startTimer():
 	timerLabel = Gtk.Label(label=f"{hours:02d}:{minutes:02d}:{seconds:02d}")
 	timerLabel.add_css_class("timer")
 
-	def countDown():
+	def countDown(localTimerId):
 		nonlocal hours, minutes, seconds
 		
-		if not running: 
+		if not running or localTimerId != timerId: 
 			return False
 		elif seconds == 1 and minutes == 0 and hours == 0:
-			seconds += 1
+			seconds -= 1
+			timerLabel.set_label(f"{hours:02d}:{minutes:02d}:{seconds:02d}")
 			stopTimer(True)
 			status.showDialog("done", "The timer has finished.")
 			return False
@@ -173,12 +176,13 @@ def startTimer():
 			hours -= 1
 		
 		timerLabel.set_label(f"{hours:02d}:{minutes:02d}:{seconds:02d}")
+		status.info("Counting down 1s")
 		return True
 	
-	def countUp():
+	def countUp(localTimerId):
 		nonlocal hours, minutes, seconds
 		
-		if not running: 
+		if not running or localTimerId != timerId: 
 			return False
 		elif seconds < 59:
 			seconds += 1
@@ -191,12 +195,14 @@ def startTimer():
 			hours += 1
 		
 		timerLabel.set_label(f"{hours:02d}:{minutes:02d}:{seconds:02d}")
+		status.info("Counting up 1s")
 		return True
 
+	currentId = timerId
 	if mode == 0:
-		GLib.timeout_add(1000, lambda: countDown())
+		GLib.timeout_add(1000, lambda: countDown(currentId))
 	elif mode == 1:
-		GLib.timeout_add(1000, lambda: countUp())
+		GLib.timeout_add(1000, lambda: countUp(currentId))
 
 	handle = Gtk.WindowHandle()
 	handle.set_child(timerLabel)
