@@ -38,10 +38,10 @@ def saveConfig(widget, path, widgetType):
 	updateTimerVisuals()
 
 
-def stopTimer(close = True):
+def stopTimer():
 	global timerDialog, running
 	running = False
-	if close: timerDialog.close()
+	timerDialog.set_visible()
 
 def createOutlineShadow(radius, color, steps):
 	shadows = []
@@ -144,9 +144,9 @@ def startTimer():
 	def close():
 		startLabel.set_label("Start"),
 		startImage.set_from_icon_name("media-playback-start-symbolic"),
-		stopTimer(False)
+		stopTimer()
 		status.success("Timer stopped")
-		return False
+		return True
 		
 
 	timerDialog.connect("close-request", lambda window: close())
@@ -163,7 +163,7 @@ def startTimer():
 			seconds -= 1
 			timerLabel.set_label(f"{hours:02d}:{minutes:02d}:{seconds:02d}")
 			status.showDialog("done", "The timer has finished.")
-			stopTimer(True)
+			stopTimer()
 			return False
 		elif seconds > 0:
 			seconds -= 1
@@ -211,6 +211,7 @@ def startTimer():
 
 	timerDialog.add_css_class("timer-dialog")
 	timerDialog.set_child(handle)
+	timerDialog.set_visible(True)
 	timerDialog.present()
 	def windowsAlwaysOnTop():
 		import ctypes
@@ -244,7 +245,7 @@ def startTimer():
 	else:
 		ignoreFile = pathlib.Path.home() / ".config" / "shaweelTimer" / ".noAlwaysOnTopWarning"
 		if not ignoreFile.exists(): status.warn("You will have to make the timer always on top yourself since you're on Linux. On GNOME you can achieve this by right clicking the timer and checking the \"Always on Top\" option. This is because, there is no cross-platform way to make a window always on top.", True)
-	status.success("Timer started")
+	status.success(f"Timer started with timer ID {timerId}")
 
 def openAbout(button: Gtk.Button):
 	dialog = Adw.Dialog()
