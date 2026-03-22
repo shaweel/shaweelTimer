@@ -12,13 +12,14 @@ print(f"{CYAN}--------------------------------{RESET}")
 import gi, status, config, math, pathlib, json
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
-from gi.repository import Adw, Gtk, Gdk, GLib, Gio
+from gi.repository import Adw, Gtk, Gdk, GLib
 settings = Gtk.Settings.get_default()
 settings.set_property("gtk-icon-theme-name", "Adwaita")
 
 status.info("Attempting to create and present libadwaita window")
 
 waitingToClose = False
+waitingForStopwatchResponse = False
 running = False
 
 OUTLINE_WIDTH_DIVIDER = 1000
@@ -130,7 +131,7 @@ def updateTimerVisuals():
 timerId = 0
 
 def startTimer():
-	global timerDialog, running, timerLabel, timerId, mainWindow, currentId, countDown, countUp
+	global timerDialog, running, timerLabel, timerId, mainWindow, currentId, waitingForStopwatchResponse, countDown, countUp
 	timerId+=1
 	mode = config.readFromConfig("mode")
 
@@ -139,6 +140,7 @@ def startTimer():
 	seconds = int(config.readFromConfig("time.seconds"))
 
 	zeroAll = True
+	waitingForStopwatchResponse = True
 	if (hours != 0 or minutes != 0 or seconds != 0) and mode == 1:
 		dialog = Adw.AlertDialog(heading="Stopwatch mode", body="The timer is in stopwatch mode without being at 0s. Do you want to start the stopwatch at the set time?")
 		css = Gtk.CssProvider()
@@ -159,7 +161,7 @@ def startTimer():
 		dialog.connect("response", lambda d, r: loop.quit())
 		dialog.present(mainWindow)
 		loop.run()
-
+	waitingForStopwatchResponse = False
 	if mode == 1 and zeroAll:
 		print("asd")
 		hours, minutes, seconds = 0, 0, 0
@@ -556,6 +558,11 @@ def onActivate(application):
 	mode.set_halign(Gtk.Align.CENTER)
 	mode.set_size_request(160, 0)
 	mode.set_model(Gtk.StringList.new(["Countdown", "Stopwatch"]))
+	def checkRunning():
+		mode.set_sensitive(not running and not waitingToClose and not waitingForStopwatchResponse)
+		return True
+
+	GLib.timeout_add(1, checkRunning)
 
 	timeBox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=5)
 	timeBox.set_halign(Gtk.Align.CENTER)
