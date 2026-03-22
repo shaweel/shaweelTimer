@@ -18,7 +18,7 @@ settings.set_property("gtk-icon-theme-name", "Adwaita")
 
 status.info("Attempting to create and present libadwaita window")
 
-wayland = os.environ.get("WAYLAND_DISPLAY") is not None
+waitingToClose = False
 running = False
 
 OUTLINE_WIDTH_DIVIDER = 1000
@@ -38,10 +38,10 @@ def saveConfig(widget, path, widgetType):
 	updateTimerVisuals()
 
 
-def stopTimer():
+def stopTimer(close):
 	global timerDialog, running
 	running = False
-	timerDialog.set_visible()
+	timerDialog.set_visible(not close)
 
 def createOutlineShadow(radius, color, steps):
 	shadows = []
@@ -137,14 +137,17 @@ def startTimer():
 
 	running = True
 	
-	timerDialog = Gtk.Window()
+	try:
+		timerDialog.set_visible(True)
+	except:
+		timerDialog = Gtk.Window()
 	timerDialog.set_resizable(False)
 	timerDialog.set_titlebar(Gtk.Box())
 	timerDialog.set_title("shaweelTimerInstance")
 	def close():
 		startLabel.set_label("Start"),
 		startImage.set_from_icon_name("media-playback-start-symbolic"),
-		stopTimer()
+		stopTimer(True)
 		status.success("Timer stopped")
 		return True
 		
@@ -162,8 +165,11 @@ def startTimer():
 		elif seconds == 1 and minutes == 0 and hours == 0:
 			seconds -= 1
 			timerLabel.set_label(f"{hours:02d}:{minutes:02d}:{seconds:02d}")
+			status.success("The timer has finished")
 			status.showDialog("done", "The timer has finished.")
-			stopTimer()
+			startLabel.set_label("Start")
+			startImage.set_from_icon_name("media-playback-start-symbolic")
+			stopTimer(True)
 			return False
 		elif seconds > 0:
 			seconds -= 1
@@ -176,7 +182,7 @@ def startTimer():
 			hours -= 1
 		
 		timerLabel.set_label(f"{hours:02d}:{minutes:02d}:{seconds:02d}")
-		status.info("Counting down 1s")
+		status.info(f"Counting down 1s, current time: {timerLabel.get_label()}")
 		return True
 	
 	def countUp(localTimerId):
@@ -195,7 +201,7 @@ def startTimer():
 			hours += 1
 		
 		timerLabel.set_label(f"{hours:02d}:{minutes:02d}:{seconds:02d}")
-		status.info("Counting up 1s")
+		status.info(f"Counting up 1s, current time: {timerLabel.get_label()}")
 		return True
 
 	currentId = timerId
@@ -211,7 +217,6 @@ def startTimer():
 
 	timerDialog.add_css_class("timer-dialog")
 	timerDialog.set_child(handle)
-	timerDialog.set_visible(True)
 	timerDialog.present()
 	def windowsAlwaysOnTop():
 		import ctypes
@@ -489,7 +494,7 @@ def openPreferences(button: Gtk.Button):
 	status.success("Registered real-time saving")
 
 def onActivate(application):
-	global startImage, startLabel
+	global startImage, startLabel, waitingToClose
 	if sys.platform == "win32": 
 		try:
 			display = Gdk.Display.get_default()
@@ -569,18 +574,30 @@ def onActivate(application):
 	startButton.set_halign(Gtk.Align.CENTER)
 	startButton.set_child(startButtonBox)
 	def onStartButtonClicked():
-		global running
-		if running:
+		global running, waitingToClose, timerDialog
+		if running and mode.get_selected() == 0:
 			startLabel.set_label("Start")
 			startImage.set_from_icon_name("media-playback-start-symbolic")
-			stopTimer()
-		else:
+			stopTimer(True)
+		elif running and mode.get_selected() == 1:
+			startLabel.set_label("Close")
+			startImage.set_from_icon_name("window-close-symbolic")
+			waitingToClose = True
+			stopTimer(False)
+		elif not running and waitingToClose:
+			startLabel.set_label("Start")
+			startImage.set_from_icon_name("media-playback-start-symbolic")
+			waitingToClose = False
+			timerDialog.set_visible(False)
+		elif not running and not waitingToClose:
 			startLabel.set_label("Stop")
 			startImage.set_from_icon_name("media-playback-stop-symbolic")
 			config.writeToConfig("time.hours", hoursSpinButton.get_value())
 			config.writeToConfig("time.minutes", minutesSpinButton.get_value())
 			config.writeToConfig("time.seconds", secondsSpinButton.get_value())
 			startTimer()
+		else:
+			status.fatal("Unknown error")
 
 	startButton.connect("clicked", lambda _: onStartButtonClicked())
 		
