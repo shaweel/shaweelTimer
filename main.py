@@ -162,8 +162,8 @@ def startTimer():
 		elif seconds == 1 and minutes == 0 and hours == 0:
 			seconds -= 1
 			timerLabel.set_label(f"{hours:02d}:{minutes:02d}:{seconds:02d}")
-			stopTimer(True)
 			status.showDialog("done", "The timer has finished.")
+			stopTimer(True)
 			return False
 		elif seconds > 0:
 			seconds -= 1
